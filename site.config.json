@@ -1,0 +1,14 @@
+{
+  "_leia": "Dados usados pelo build. Deixe site_url vazio até o domínio definitivo existir: sem domínio, canonical, og:url, og:image, twitter:image e sitemap.xml não são gerados (evita publicar URL errada).",
+  "site_url": "",
+  "name": "Forte Duto",
+  "phone_e164": "+5521987114521",
+  "phone_display": "(21) 98711-4521",
+  "whatsapp_number": "5521987114521",
+  "email": "",
+  "address": null,
+  "area_served": [],
+  "opening_hours": [],
+  "same_as": [],
+  "form_endpoint": ""
+}
