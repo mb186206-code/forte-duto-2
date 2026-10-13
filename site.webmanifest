@@ -1,0 +1,12 @@
+{
+  "name": "Forte Duto",
+  "short_name": "Forte Duto",
+  "icons": [
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#0B2F6B",
+  "background_color": "#FFFFFF",
+  "display": "browser",
+  "lang": "pt-BR"
+}
