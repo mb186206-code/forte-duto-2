@@ -96,6 +96,17 @@ section[id] { scroll-margin-top: calc(var(--header-h) + 8px); }
 .btn .ico { width: 1.25em; height: 1.25em; flex: none; }
 .btn-lg { min-height: 54px; padding: .85rem 1.5rem; font-size: var(--t-md); }
 .btn-sm { min-height: 44px; padding: .5rem .9rem; }
+.btn-xl { min-height: 64px; padding: 1rem 2.25rem; font-size: 1.375rem; font-weight: 700; }
+.btn-xl .ico { width: 1.4em; height: 1.4em; }
+/* "Falar agora": CTA principal; o anel pulsa algumas vezes ao carregar para puxar o olhar */
+.btn-agora { position: relative; }
+.btn-agora::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  border: 2px solid var(--amarelo); opacity: 0; pointer-events: none;
+  animation: wa-pulso-btn 1.6s ease-out .6s 4;
+}
+.site-header .btn-agora::before { animation-delay: 1.2s; animation-iteration-count: 3; }
+@keyframes wa-pulso-btn { 0% { transform: scale(1); opacity: .9; } 100% { transform: scale(1.18, 1.45); opacity: 0; } }
 .btn-wa { background: var(--acao); color: var(--branco); }
 .btn-wa:hover { background: var(--acao-hover); }
 .btn-ghost { background: transparent; color: var(--branco); border-color: rgba(255,255,255,.5); }
@@ -120,7 +131,7 @@ section[id] { scroll-margin-top: calc(var(--header-h) + 8px); }
 @media (min-width: 1000px) { .site-nav { display: block; } }
 
 /* ---------- hero ---------- */
-.hero { background: var(--azul-escuro); color: var(--branco); padding-block: clamp(3rem, 8vw, 6rem); }
+.hero { background: var(--azul-escuro); color: var(--branco); padding-block: clamp(1.75rem, 7vw, 6rem) clamp(3rem, 8vw, 6rem); }
 .hero-grid { display: grid; gap: 2rem; align-items: center; }
 .hero-text { display: grid; gap: 1.5rem; min-width: 0; }
 .kicker { font: 700 var(--t-md)/1 var(--f-display); text-transform: uppercase; letter-spacing: .08em; color: var(--amarelo); }
@@ -134,7 +145,11 @@ section[id] { scroll-margin-top: calc(var(--header-h) + 8px); }
   .hero-grid { grid-template-columns: 1.15fr .85fr; gap: 3rem; }
   .hero-media { justify-self: end; }
 }
-@media (max-width: 959px) { .hero-media { order: -1; width: min(60vw, 300px); } }
+.hero-cta { display: grid; gap: .6rem; justify-items: start; }
+.hero-cta-nota { font-size: var(--t-xs); color: var(--azul-claro); }
+/* no celular o logo vai para baixo do texto: o "Falar agora" aparece logo na primeira tela */
+@media (max-width: 959px) { .hero-media { width: min(56vw, 260px); } }
+@media (max-width: 520px) { .hero-cta, .hero-cta .btn { width: 100%; justify-items: stretch; } .hero-cta-nota { text-align: center; } }
 @media (max-width: 420px) { .hero-actions .btn { width: 100%; } }
 
 /* ---------- cabeça de seção ---------- */
@@ -367,7 +382,7 @@ details.servico[open] summary::after { transform: rotate(45deg); background: rgb
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .wa-float::before { animation: none; }
+  .wa-float::before, .btn-agora::before { animation: none; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
