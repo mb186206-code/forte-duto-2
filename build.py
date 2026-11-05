@@ -37,9 +37,9 @@ def json_ld():
         '@context': 'https://schema.org',
         '@type': 'Plumber',
         'name': cfg['name'],
-        'description': 'Desentupimento e hidráulica: desentupimento de pias, ralos, vasos, tubulações e redes de esgoto, limpeza de caixa de gordura e reparos hidráulicos.',
+        'description': 'Desentupimento e hidráulica: desentupimento de pias, ralos, vasos, tubulações e redes de esgoto, limpeza de caixa de gordura e de caixa d’água, localização de vazamentos e reparos hidráulicos.',
         'telephone': cfg['phone_e164'],
-        'knowsAbout': ['Desentupimento', 'Hidráulica', 'Limpeza de caixa de gordura', 'Reparos hidráulicos'],
+        'knowsAbout': ['Desentupimento', 'Hidráulica', 'Limpeza de caixa de gordura', 'Limpeza de caixa d’água', 'Reparo de registros', 'Localização de vazamentos', 'Reparos hidráulicos'],
     }
     if site:
         biz.update({'@id': site + '/#empresa', 'url': site + '/', 'logo': site + '/icon-512.png', 'image': site + '/og-image.webp'})
