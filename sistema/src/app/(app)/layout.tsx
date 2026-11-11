@@ -1,0 +1,24 @@
+import { AppSidebar } from "@/components/layout/app-sidebar";
+import { Topbar } from "@/components/layout/topbar";
+import { requireUser } from "@/lib/auth/session";
+
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  const user = await requireUser();
+  return (
+    <div className="min-h-dvh">
+      <a
+        href="#conteudo"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-highlight focus:px-4 focus:py-2 focus:font-semibold focus:text-highlight-foreground"
+      >
+        Pular para o conteúdo
+      </a>
+      <AppSidebar role={user.role} />
+      <div className="min-w-0 lg:pl-72">
+        <Topbar user={user} />
+        <main id="conteudo" className="mx-auto w-full min-w-0 max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}

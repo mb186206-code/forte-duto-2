@@ -1,0 +1,181 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* =====================================================================
+   FORTE DUTO — Design tokens
+   Paleta da marca: azul-marinho #172C4A · azul #245B91 · amarelo #F2C230
+   Ver DESIGN_SYSTEM.md
+   ===================================================================== */
+:root {
+  --brand-navy: #172c4a;
+  --brand-blue: #245b91;
+  --brand-yellow: #f2c230;
+
+  --radius: 0.75rem;
+
+  --background: #f5f7fa;
+  --foreground: #0f1b2d;
+  --card: #ffffff;
+  --card-foreground: #0f1b2d;
+  --popover: #ffffff;
+  --popover-foreground: #0f1b2d;
+  --primary: #172c4a;
+  --primary-foreground: #ffffff;
+  --secondary: #e8eef6;
+  --secondary-foreground: #172c4a;
+  --muted: #eef2f7;
+  --muted-foreground: #556579;
+  --accent: #e6eef8;
+  --accent-foreground: #172c4a;
+  --highlight: #f2c230;
+  --highlight-foreground: #172c4a;
+  --destructive: #b42318;
+  --destructive-foreground: #ffffff;
+  --success: #157f3c;
+  --success-soft: #e7f6ec;
+  --warning: #a15c07;
+  --warning-soft: #fdf3e1;
+  --danger-soft: #fdecea;
+  --info: #245b91;
+  --info-soft: #e6eef8;
+  --border: #dfe5ee;
+  --input: #cfd8e3;
+  --ring: #245b91;
+
+  --sidebar: #172c4a;
+  --sidebar-foreground: #c9d5e5;
+  --sidebar-foreground-strong: #ffffff;
+  --sidebar-accent: rgba(255, 255, 255, 0.08);
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-indicator: #f2c230;
+
+  --chart-1: #245b91;
+  --chart-2: #f2c230;
+  --chart-3: #157f3c;
+  --chart-4: #b42318;
+  --chart-5: #7a8ca3;
+}
+
+.dark {
+  --background: #0b1421;
+  --foreground: #e6edf6;
+  --card: #111d2e;
+  --card-foreground: #e6edf6;
+  --popover: #132134;
+  --popover-foreground: #e6edf6;
+  --primary: #4f8fd1;
+  --primary-foreground: #08111d;
+  --secondary: #1a2a40;
+  --secondary-foreground: #e6edf6;
+  --muted: #16243a;
+  --muted-foreground: #93a4ba;
+  --accent: #1b2d47;
+  --accent-foreground: #e6edf6;
+  --highlight: #f2c230;
+  --highlight-foreground: #172c4a;
+  --destructive: #f0645a;
+  --destructive-foreground: #1a0503;
+  --success: #4cc27a;
+  --success-soft: #11291c;
+  --warning: #f0b14a;
+  --warning-soft: #2b2110;
+  --danger-soft: #2e1513;
+  --info: #79aee6;
+  --info-soft: #14263d;
+  --border: #22344d;
+  --input: #2b405d;
+  --ring: #79aee6;
+
+  --sidebar: #0e1a2b;
+  --sidebar-foreground: #a9b8cc;
+  --sidebar-foreground-strong: #ffffff;
+  --sidebar-accent: rgba(255, 255, 255, 0.06);
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-indicator: #f2c230;
+
+  --chart-1: #79aee6;
+  --chart-2: #f2c230;
+  --chart-3: #4cc27a;
+  --chart-4: #f0645a;
+  --chart-5: #93a4ba;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-barlow), var(--font-inter), ui-sans-serif, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-highlight: var(--highlight);
+  --color-highlight-foreground: var(--highlight-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-foreground-strong: var(--sidebar-foreground-strong);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-indicator: var(--sidebar-indicator);
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-yellow: var(--brand-yellow);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+  /* valores monetários alinhados */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
