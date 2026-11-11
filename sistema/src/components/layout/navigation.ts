@@ -81,7 +81,7 @@ export const MOBILE_TABS: { key: ModuleKey; label: string; href: string; icon: L
 ];
 
 /** Fase atual de entrega do sistema (ver IMPLEMENTATION_PLAN.md). */
-export const CURRENT_PHASE = 3;
+export const CURRENT_PHASE = 4;
 
 export function isAvailable(phase: number): boolean {
   return phase <= CURRENT_PHASE;

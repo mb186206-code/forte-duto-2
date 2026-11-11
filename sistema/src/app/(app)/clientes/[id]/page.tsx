@@ -11,6 +11,8 @@ import { formatPhone, whatsappLink } from "@/lib/contact";
 import { formatDateBR, spParts } from "@/lib/dates";
 import { sumCents } from "@/lib/money";
 import { getCommercialLookups, getCustomer, listBudgets, listPayments, listServices } from "@/features/comercial/queries";
+import { getAttributionLookups, getPrimaryAttribution } from "@/features/marketing/queries";
+import { AttributionSection } from "@/features/marketing/components/attribution-section";
 import { CustomerActions } from "@/features/comercial/components/customer-actions";
 import { customerBadge } from "@/features/comercial/status";
 import { BUDGET_STATUS_LABEL, CUSTOMER_STATUS_LABEL, SERVICE_STATUS_LABEL } from "@/features/comercial/types";
@@ -23,11 +25,13 @@ export default async function ClientePage({ params }: { params: Promise<{ id: st
   if (!z.uuid().safeParse(id).success) notFound();
   const customer = await getCustomer(id);
   if (!customer) notFound();
-  const [lookups, services, budgets, payments] = await Promise.all([
+  const [lookups, services, budgets, payments, attribution, attrLookups] = await Promise.all([
     getCommercialLookups(),
     listServices({ customerId: id }),
     listBudgets({ customerId: id }),
     listPayments({ customerId: id }),
+    getPrimaryAttribution(id),
+    getAttributionLookups(),
   ]);
   const paid = sumCents(payments.filter((p) => p.status === "efetivado").map((p) => p.amount));
   const open = sumCents(payments.filter((p) => p.status === "pendente").map((p) => p.amount));
@@ -98,6 +102,8 @@ export default async function ClientePage({ params }: { params: Promise<{ id: st
           <p className="mt-1 text-xl font-bold"><Money cents={open} /></p>
         </Card>
       </div>
+
+      <AttributionSection customerId={id} current={attribution} lookups={attrLookups} />
 
       <Card className="p-4">
         <h2 className="mb-2 font-semibold">Serviços</h2>
