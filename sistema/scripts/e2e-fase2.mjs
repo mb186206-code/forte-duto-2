@@ -36,9 +36,6 @@ p.on("console", (msg) => msg.type() === "error" && consoleErrors.push(msg.text()
 
 const sheet = () => p.getByRole("dialog");
 const main = () => p.getByRole("main");
-async function closeToast() {
-  await p.waitForTimeout(300);
-}
 
 console.log("Entrada");
 await step("entra como Daniel", async () => {

@@ -59,3 +59,22 @@ export function addDays(iso: string, days: number): string {
   d.setUTCDate(d.getUTCDate() + days);
   return d.toISOString().slice(0, 10);
 }
+
+/** Instante (timestamptz) → dia e hora em São Paulo: { date: "2026-11-05", time: "14:30" }. */
+export function spParts(iso: string | null | undefined): { date: string; time: string } | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  const date = new Intl.DateTimeFormat("sv-SE", { timeZone: TZ }).format(d);
+  const time = new Intl.DateTimeFormat("pt-BR", { timeZone: TZ, hour: "2-digit", minute: "2-digit", hour12: false }).format(d);
+  return { date, time };
+}
+
+/** Dia + hora digitados (horário de São Paulo, sem horário de verão) → instante para gravar. */
+export function toSpInstant(date: string, time?: string | null): string {
+  return `${date}T${time && /^\d{2}:\d{2}$/.test(time) ? time : "08:00"}:00-03:00`;
+}
+
+export function isTime(s: unknown): s is string {
+  return typeof s === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(s);
+}

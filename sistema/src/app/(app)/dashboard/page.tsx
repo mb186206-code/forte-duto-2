@@ -6,7 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { QuickActionList } from "@/components/layout/quick-action-list";
 import { Money } from "@/components/shared/money";
 import { getCurrentUserName } from "@/lib/access/session";
-import { addDays, currentMonth, formatDateBR, monthLabel, todayISO } from "@/lib/dates";
+import { addDays, currentMonth, formatDateBR, monthLabel, spParts, todayISO } from "@/lib/dates";
+import { listBudgets, listServices } from "@/features/comercial/queries";
+import { effectiveBudgetStatus } from "@/features/comercial/status";
+import { SERVICE_STATUS_LABEL } from "@/features/comercial/types";
 import { getMonthlySeries, getPosition, listMonthTransactions, listPending, listRecent, summarize } from "@/features/financeiro/queries";
 import { PositionCards } from "@/features/financeiro/components/position-cards";
 import { MonthlyChart } from "@/features/financeiro/components/monthly-chart";
@@ -28,13 +31,19 @@ export default async function DashboardPage() {
   const firstName = ((await getCurrentUserName()) ?? "").split(" ")[0];
   const today = todayISO();
   const month = currentMonth();
-  const [position, monthRows, pending, recent, series] = await Promise.all([
+  const [position, monthRows, pending, recent, series, services, budgets] = await Promise.all([
     getPosition(),
     listMonthTransactions(month),
     listPending(),
     listRecent(5),
     getMonthlySeries(6, month),
+    listServices(),
+    listBudgets(),
   ]);
+  const openServices = services.filter((x) => x.status !== "concluido" && x.status !== "cancelado");
+  const todayServices = openServices.filter((x) => spParts(x.scheduledAt)?.date === today);
+  const lateServices = openServices.filter((x) => (spParts(x.scheduledAt)?.date ?? today) < today);
+  const waitingBudgets = budgets.filter((b) => effectiveBudgetStatus(b, today) === "aguardando");
   const sum = summarize(monthRows);
   const soon = addDays(today, 7);
   const dueSoon = pending.filter((t) => (t.dueDate ?? t.competenceDate) <= soon).slice(0, 6);
@@ -61,6 +70,42 @@ export default async function DashboardPage() {
         </h2>
         <QuickActionList />
       </section>
+
+      <Card className="p-4">
+        <h2 className="font-semibold">Serviços de hoje</h2>
+        {todayServices.length === 0 ? (
+          <p className="py-2 text-sm text-muted-foreground">Nenhum serviço marcado para hoje.</p>
+        ) : (
+          <ul className="mt-2 divide-y">
+            {todayServices.map((x) => (
+              <li key={x.id}>
+                <Link href={`/servicos/${x.id}`} className="flex items-center gap-3 py-2.5">
+                  <span className="w-12 shrink-0 text-sm font-bold tabular-nums">{spParts(x.scheduledAt)?.time}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium">{x.customerName}</span>
+                    <span className="block truncate text-xs text-muted-foreground">{x.typeName ?? x.description ?? "Serviço"}</span>
+                  </span>
+                  <Badge>{SERVICE_STATUS_LABEL[x.status]}</Badge>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+        {(lateServices.length > 0 || waitingBudgets.length > 0) && (
+          <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 border-t pt-2 text-sm">
+            {lateServices.length > 0 && (
+              <Link href="/servicos" className="font-medium text-warning">
+                {lateServices.length} {lateServices.length === 1 ? "serviço atrasado" : "serviços atrasados"}
+              </Link>
+            )}
+            {waitingBudgets.length > 0 && (
+              <Link href="/orcamentos" className="font-medium text-info">
+                {waitingBudgets.length} {waitingBudgets.length === 1 ? "orçamento aguardando resposta" : "orçamentos aguardando resposta"}
+              </Link>
+            )}
+          </p>
+        )}
+      </Card>
 
       <PositionCards position={position} />
 

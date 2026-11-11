@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
-import { ModuleComingSoon } from "@/components/shared/module-coming-soon";
-import { NAV_ITEMS } from "@/components/layout/navigation";
+import { PageHeader } from "@/components/shared/page-header";
+import { getCommercialLookups, listCustomers } from "@/features/comercial/queries";
+import { ClientesView } from "@/features/comercial/components/clientes-view";
 
-const item = NAV_ITEMS.find((i) => i.key === "clientes")!;
+export const metadata: Metadata = { title: "Clientes" };
+export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = { title: item.label };
-
-export default function Page() {
-  return <ModuleComingSoon item={item} />;
+export default async function ClientesPage({ searchParams }: { searchParams: Promise<{ novo?: string }> }) {
+  const sp = await searchParams;
+  const [rows, lookups] = await Promise.all([listCustomers(), getCommercialLookups()]);
+  return (
+    <div className="mx-auto grid w-full max-w-3xl gap-5">
+      <PageHeader title="Clientes" description="Quem pediu serviço ou orçamento. Toque num cliente para ver tudo dele." />
+      <ClientesView rows={rows} lookups={lookups} openNew={sp.novo === "1"} />
+    </div>
+  );
 }

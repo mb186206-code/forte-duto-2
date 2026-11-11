@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
   // Sistema de gestão: todas as telas dependem do usuário logado e de dados
   // atualizados, então renderizamos sob demanda (sem Cache Components).
   poweredByHeader: false,
+  // Fotos de serviço vão por Server Action (já reduzidas no celular, até 4 MB).
+  experimental: { serverActions: { bodySizeLimit: "5mb" } },
   turbopack: {
     rules: {
       "*.css": {
