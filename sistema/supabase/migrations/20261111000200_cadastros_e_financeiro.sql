@@ -101,7 +101,7 @@ create table public.accounts (
   opening_date     date not null default current_date,
   active           boolean not null default true,
   notes            text check (char_length(notes) <= 1000),
-  created_by       uuid references auth.users (id) on delete set null default auth.uid(),
+  created_by       text not null default public.current_actor(),
   created_at       timestamptz not null default now(),
   updated_at       timestamptz not null default now()
 );
@@ -146,7 +146,7 @@ create table public.transactions (
   campaign_id          uuid,   -- FK adicionada na migração 3
   supplier             text check (char_length(supplier) <= 120),
   notes                text check (char_length(notes) <= 2000),
-  created_by           uuid references auth.users (id) on delete set null default auth.uid(),
+  created_by           text not null default public.current_actor(),
   created_at           timestamptz not null default now(),
   updated_at           timestamptz not null default now(),
 
@@ -202,7 +202,7 @@ create table public.funds (
   account_id     uuid references public.accounts (id) on delete set null,  -- onde o dinheiro fica guardado (opcional)
   active         boolean not null default true,
   notes          text check (char_length(notes) <= 1000),
-  created_by     uuid references auth.users (id) on delete set null default auth.uid(),
+  created_by     text not null default public.current_actor(),
   created_at     timestamptz not null default now(),
   updated_at     timestamptz not null default now()
 );
@@ -217,7 +217,7 @@ create table public.fund_movements (
   amount         numeric(14,2) not null check (amount > 0),
   movement_date  date not null default current_date,
   notes          text check (char_length(notes) <= 1000),
-  created_by     uuid references auth.users (id) on delete set null default auth.uid(),
+  created_by     text not null default public.current_actor(),
   created_at     timestamptz not null default now(),
   updated_at     timestamptz not null default now()
 );

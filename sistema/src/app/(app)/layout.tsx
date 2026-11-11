@@ -1,10 +1,12 @@
+import { redirect } from "next/navigation";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { Topbar } from "@/components/layout/topbar";
 import { BottomNav } from "@/components/layout/bottom-nav";
-import { requireUser } from "@/lib/auth/session";
+import { getCurrentUserName } from "@/lib/access/session";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const user = await requireUser();
+  const userName = await getCurrentUserName();
+  if (!userName) redirect("/entrar");
   return (
     <div className="min-h-dvh">
       <a
@@ -13,14 +15,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       >
         Pular para o conteúdo
       </a>
-      <AppSidebar role={user.role} />
+      <AppSidebar userName={userName} />
       <div className="min-w-0 lg:pl-72">
-        <Topbar user={user} />
+        <Topbar userName={userName} />
         <main id="conteudo" className="mx-auto w-full min-w-0 max-w-7xl px-4 pt-5 pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:px-6 lg:py-8">
           {children}
         </main>
       </div>
-      <BottomNav role={user.role} />
+      <BottomNav userName={userName} />
     </div>
   );
 }

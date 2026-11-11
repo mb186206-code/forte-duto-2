@@ -8,7 +8,8 @@ Tipos TypeScript gerados em `src/lib/supabase/database.types.ts` (`npm run db:ty
 - Dinheiro: `numeric(14,2)`, sempre positivo nas movimentações (o tipo diz se entra ou sai).
 - Datas de negócio: `date`; momentos de sistema: `timestamptz`.
 - Toda tabela de negócio tem `created_at`, `updated_at` (trigger) e, quando faz sentido, `created_by`.
-- Toda tabela de negócio tem **RLS ligado e forçado** e trigger de **auditoria**.
+- Toda tabela tem **RLS ligado e forçado, sem nenhuma política**: só o servidor do sistema (chave secreta) acessa. A chave pública não lê nem grava nada.
+- Toda tabela de negócio tem trigger de **auditoria**. `created_by` e o histórico guardam o **nome** de quem estava usando o celular (cabeçalho `x-app-user`, lido por `current_actor()`).
 - Nomes de categorias, contas, fundos etc. são únicos sem diferenciar maiúsculas.
 
 ## Tabelas
@@ -16,9 +17,9 @@ Tipos TypeScript gerados em `src/lib/supabase/database.types.ts` (`npm run db:ty
 ### Usuários e sistema
 | Tabela | Conteúdo |
 |---|---|
-| `auth.users` | Usuários (gerenciada pelo Supabase Auth). **É a tabela "users"** — não existe cópia. |
-| `profiles` | 1:1 com `auth.users`: nome, e-mail, telefone, `role` (admin/financeiro/operacional), `active`. Criado por trigger; o 1º usuário vira admin. |
-| `audit_logs` | Histórico de alterações (tabela, registro, ação, dados antes/depois, quem, quando). Só admin lê; ninguém escreve direto. |
+| `audit_logs` | Histórico de alterações (tabela, registro, ação, dados antes/depois, nome de quem fez, quando). Não pode ser alterado nem apagado. |
+
+Não há tabela de usuários: o sistema não tem login (pedido do Daniel). Cada pessoa digita o nome uma vez no celular.
 | `company_settings` | Linha única: dados da empresa e metas mensais. |
 
 ### Cadastros auxiliares (editáveis em Configurações)
@@ -78,10 +79,9 @@ digitados**: são calculados a partir das atribuições (Fase 4), evitando núme
 
 ### Anexos
 `attachments` (comprovantes, fotos antes/depois) + bucket privado `anexos` no Storage
-(caminho `<entidade>/<id>/<arquivo>`, até 20 MB, imagens e PDF). Comprovantes de movimentações
-só para admin/financeiro.
+(caminho `<entidade>/<id>/<arquivo>`, até 20 MB, imagens e PDF).
 
-## Views de cálculo (respeitam o RLS de quem consulta)
+## Views de cálculo
 
 | View | Fórmula |
 |---|---|
@@ -99,23 +99,12 @@ só para admin/financeiro.
 - **Cancelado** não entra em nenhum cálculo.
 - Faturamento = receitas por `competence_date` (não canceladas). Receita recebida = receitas `efetivado` por `settled_date`. Resultado operacional = receitas reconhecidas − custos diretos − despesas operacionais − impostos do período (investimentos aparecem à parte). Implementado na Fase 2.
 
-## Permissões (RLS)
+## Acesso
 
-| Área | Administrador | Financeiro | Operacional |
-|---|---|---|---|
-| Contas, movimentações, fundos | tudo | ler, criar, editar | — |
-| Categorias, formas de pagamento | tudo | ler, criar, editar | ler |
-| Tipos de serviço, origens, empresa | tudo | ler | ler |
-| Clientes, atribuições | tudo | ler, criar, editar | ler, criar, editar |
-| Orçamentos, serviços | tudo | ler | ler, criar, editar |
-| Itens de orçamento/serviço | tudo | ler | tudo |
-| Campanhas, anúncios | tudo | ler, criar, editar | ler |
-| Métricas de campanha (investimento) | tudo | ler, criar, editar | — |
-| Perfis | tudo | ler; editar o próprio nome/telefone | idem |
-| Histórico de alterações | ler | — | — |
-| **Excluir** registros principais | sim | não | não |
+O sistema é usado só pelo Daniel e pela equipe, sem login:
 
-Usuário desativado (`active = false`) e visitante anônimo não acessam nada. Só admin muda função,
-situação ou e-mail; o último administrador ativo não pode ser rebaixado nem desativado.
+- O navegador **nunca** fala com o banco. Só o servidor Next.js, com `SUPABASE_SECRET_KEY`.
+- Os papéis `anon` e `authenticated` do Supabase não têm privilégio em nenhuma tabela, view ou função; o bucket `anexos` é privado.
+- A entrada no sistema é protegida pelo **código da empresa** (`APP_ACCESS_CODE`), digitado uma vez por celular.
 
-Todas as regras acima têm teste automatizado em `scripts/test-db.mjs`.
+Tudo isso tem teste automatizado em `scripts/test-db.mjs`.

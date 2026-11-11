@@ -10,16 +10,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { Role } from "@/lib/auth/permissions";
 import { QUICK_ACTIONS, isAvailable } from "./navigation";
 
 /**
  * Botões de ação rápida. Ações de módulos ainda não entregues aparecem
  * desativadas com a fase prevista — nunca como botão que não faz nada.
  */
-export function QuickActions({ role }: { role: Role }) {
-  const actions = QUICK_ACTIONS.filter((a) => a.roles.includes(role));
-  if (actions.length === 0) return null;
+export function QuickActions() {
+  const actions = QUICK_ACTIONS;
 
   return (
     <DropdownMenu>

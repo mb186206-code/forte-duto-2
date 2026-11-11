@@ -3,30 +3,30 @@
 ## Visão geral
 
 ```
-Navegador ──► proxy.ts (renova sessão, bloqueia quem não está logado)
-          ──► Server Components / Server Actions (requireUser / requireModule)
-          ──► Supabase (PostgREST + Auth) ──► PostgreSQL com RLS (última barreira)
+Celular ──► proxy.ts (sem passe ou sem nome → /entrar)
+        ──► Server Components / Server Actions (validação com Zod)
+        ──► Supabase com a chave secreta (só no servidor) ──► PostgreSQL
 ```
 
-Três camadas de proteção, da mais fraca para a mais forte:
+Não há login (pedido do Daniel: o sistema é só dele e da equipe). A proteção é:
 
-1. **Interface** (`lib/auth/permissions.ts`): esconde do menu o que a função não usa.
-2. **Servidor** (`lib/auth/session.ts`): cada página chama `requireModule()`; cada Server Action
-   chama `requireUser()` e valida os dados com Zod.
-3. **Banco** (RLS): mesmo que alguém chame a API direto com o token, só lê/escreve o que a função
-   permite. Esta é a proteção que vale.
+1. **Código da empresa** (`APP_ACCESS_CODE`): digitado uma vez por celular. Vira um cookie
+   `fd_acesso` httpOnly, assinado com HMAC (`APP_SESSION_SECRET`), válido por 400 dias. A assinatura
+   inclui o código, então trocar o código desconecta todos. Código errado tem espera de 0,8 s.
+2. **Banco fechado**: o navegador nunca recebe chave do Supabase. RLS forçado sem políticas e
+   privilégios revogados de `anon`/`authenticated`; só o servidor (service_role) acessa.
+3. **Nome de quem usa** (cookie `fd_nome`) vai no cabeçalho `x-app-user`; o banco grava esse nome
+   no histórico (`audit_logs`) e em `created_by`.
 
 ## Pastas
 
 ```
 sistema/
 ├─ src/
-│  ├─ proxy.ts                    # (antigo middleware) sessão + redirecionamento para login
+│  ├─ proxy.ts                    # (antigo middleware) confere passe e nome; senão → /entrar
 │  ├─ app/
-│  │  ├─ (auth)/                  # login, recuperar-senha, redefinir-senha (layout com a marca)
-│  │  ├─ (app)/                   # área logada: sidebar + topbar; um diretório por módulo
-│  │  ├─ auth/confirm/route.ts    # destino dos links de e-mail (token_hash ou code)
-│  │  ├─ auth/sair/route.ts       # encerra sessão de usuário desativado
+│  │  ├─ entrar/                  # boas-vindas: nome + código da empresa
+│  │  ├─ (app)/                   # sistema: barra de baixo (celular), menu lateral (computador)
 │  │  └─ configuracao-pendente/   # tela quando faltam as variáveis do Supabase
 │  ├─ components/
 │  │  ├─ ui/                      # primitivos (padrão shadcn/ui sobre Radix)
@@ -36,13 +36,12 @@ sistema/
 │  │  └─ brand/                   # logo
 │  ├─ features/<módulo>/actions.ts # Server Actions (regras de negócio + escrita)
 │  └─ lib/
-│     ├─ supabase/                # clientes (browser, server, proxy), env, tipos gerados
-│     ├─ auth/                    # sessão (DAL), permissões, rotas públicas
+│     ├─ supabase/                # cliente do servidor (chave secreta), env, tipos gerados
+│     ├─ access/                  # passe do celular (HMAC), configuração, nome de quem usa
 │     ├─ validation/              # esquemas Zod (mensagens em português)
 │     └─ money.ts                 # dinheiro em centavos inteiros
 ├─ supabase/
 │  ├─ migrations/                 # SQL versionado (fonte da verdade do banco)
-│  ├─ templates/                  # e-mails em português
 │  └─ config.toml                 # Supabase local
 └─ scripts/                       # testes de banco e ponta a ponta
 ```
@@ -53,14 +52,14 @@ Regra de dependência: `app` → `features` → `lib`. Componentes de `ui` não 
 
 | Decisão | Motivo |
 |---|---|
-| Next.js 16 **sem** Cache Components | Toda tela depende do usuário e de dados atuais; renderização sob demanda é mais simples e segura. |
-| `proxy.ts` usa `getClaims()`; páginas usam `getUser()` | O proxy é rápido; a página valida o token no servidor de Auth antes de mostrar dados. |
+| Next.js 16 **sem** Cache Components | Toda tela depende de dados atuais; renderização sob demanda é mais simples e segura. |
+| Sem login; código da empresa + nome | Pedido do Daniel: uso simples no celular, só ele e a equipe. |
+| Banco acessado **só pelo servidor** | Sem usuários no Supabase, RLS por pessoa não faz sentido; fechar o banco para o navegador é mais seguro. |
 | Dinheiro em **centavos inteiros** no código, `numeric(14,2)` no banco | Evita erro de ponto flutuante (0,10 + 0,20 = 0,30 exato). Conversão só nas bordas (`toDbAmount`/`fromDbAmount`). |
-| Cálculos de saldo em **views SQL** (`account_balances`, `fund_balances`, `financial_position`) | Uma única fonte da verdade, respeitando RLS (`security_invoker`). |
+| Cálculos de saldo em **views SQL** (`account_balances`, `fund_balances`, `financial_position`) | Uma única fonte da verdade. |
 | Regras críticas no banco (constraints, triggers) | Transferência sem destino, valor ≤ 0, retirada maior que o fundo, cliente duplicado: o banco recusa, independentemente da tela. |
 | Formulários com `useFormAction` (submit via transição) | O reset automático de formulários do React 19 apagaria o que a pessoa digitou quando há erro de validação. |
-| Primeiro usuário vira admin; cadastro público desligado | Sistema interno: ninguém se cadastra sozinho. |
-| `SUPABASE_SECRET_KEY` só em código de servidor (Fase 5) | Nunca no navegador. As chaves públicas dependem do RLS. |
+| Celular primeiro | Barra de baixo com Início, Dinheiro, **+**, Serviços e Menu; ações em linguagem do dia a dia. |
 
 ## Skiper UI e shadcn/ui
 

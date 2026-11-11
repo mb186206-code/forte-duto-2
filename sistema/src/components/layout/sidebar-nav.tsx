@@ -4,13 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
-import { canAccess, type Role } from "@/lib/auth/permissions";
 import { NAV_ITEMS, isAvailable } from "./navigation";
 
 /** Lista de módulos do menu lateral (usada no desktop e no menu do celular). */
-export function SidebarNav({ role, onNavigate }: { role: Role; onNavigate?: () => void }) {
+export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
-  const items = NAV_ITEMS.filter((item) => canAccess(role, item.key));
+  const items = NAV_ITEMS;
 
   return (
     <nav aria-label="Menu principal" className="flex flex-col gap-0.5">

@@ -6,16 +6,15 @@ import { usePathname } from "next/navigation";
 import { Dialog as P } from "radix-ui";
 import { Menu, Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { canAccess, type Role } from "@/lib/auth/permissions";
 import { MOBILE_TABS } from "./navigation";
 import { QuickActionList } from "./quick-action-list";
 import { MobileNav } from "./mobile-nav";
 
 /** Barra inferior do celular: 3 abas, botão "+" no meio e "Menu". */
-export function BottomNav({ role }: { role: Role }) {
+export function BottomNav({ userName }: { userName: string }) {
   const pathname = usePathname();
   const [plusOpen, setPlusOpen] = useState(false);
-  const tabs = MOBILE_TABS.filter((t) => canAccess(role, t.key)).slice(0, 3);
+  const tabs = MOBILE_TABS;
 
   const tab = (t: (typeof tabs)[number]) => {
     const active = pathname === t.href || pathname.startsWith(t.href + "/");
@@ -66,7 +65,7 @@ export function BottomNav({ role }: { role: Role }) {
                 </P.Close>
               </div>
               <P.Description className="sr-only">Ações rápidas</P.Description>
-              <QuickActionList role={role} onSelect={() => setPlusOpen(false)} />
+              <QuickActionList onSelect={() => setPlusOpen(false)} />
             </P.Content>
           </P.Portal>
         </P.Root>
@@ -74,7 +73,7 @@ export function BottomNav({ role }: { role: Role }) {
         {tabs.slice(2).map(tab)}
 
         <MobileNav
-          role={role}
+          userName={userName}
           trigger={
             <button type="button" className="flex flex-1 flex-col items-center justify-center gap-1 text-[0.72rem] font-semibold text-muted-foreground">
               <span className="flex h-8 w-14 items-center justify-center rounded-full">

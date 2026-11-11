@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { KeyRound, LogOut, Moon, Search, Sun, UserRound } from "lucide-react";
+import { Moon, Search, Sun, UserRound } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import {
   Command,
@@ -14,15 +14,13 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import { canAccess, type Role } from "@/lib/auth/permissions";
-import { signOut } from "@/features/auth/actions";
 import { NAV_ITEMS, QUICK_ACTIONS, isAvailable } from "./navigation";
 
 /**
  * Busca global (Ctrl+K / ⌘K). Na Fase 1 encontra telas e ações;
  * a partir das próximas fases também busca clientes, serviços e movimentações.
  */
-export function CommandMenu({ role }: { role: Role }) {
+export function CommandMenu() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { resolvedTheme, setTheme } = useTheme();
@@ -43,8 +41,8 @@ export function CommandMenu({ role }: { role: Role }) {
     router.push(href);
   };
 
-  const modules = NAV_ITEMS.filter((i) => canAccess(role, i.key));
-  const actions = QUICK_ACTIONS.filter((a) => a.roles.includes(role) && isAvailable(a.phase));
+  const modules = NAV_ITEMS;
+  const actions = QUICK_ACTIONS.filter((a) => isAvailable(a.phase));
 
   return (
     <>
@@ -71,7 +69,7 @@ export function CommandMenu({ role }: { role: Role }) {
           <DialogTitle className="sr-only">Busca global</DialogTitle>
           <DialogDescription className="sr-only">Encontre telas e ações do sistema</DialogDescription>
           <Command loop>
-            <CommandInput placeholder="O que você procura? Ex.: despesa, clientes, senha" />
+            <CommandInput placeholder="O que você procura? Ex.: despesa, clientes" />
             <CommandList>
               <CommandEmpty>Nada encontrado. Tente outra palavra.</CommandEmpty>
               <CommandGroup heading="Ir para">
@@ -100,14 +98,10 @@ export function CommandMenu({ role }: { role: Role }) {
                 </CommandGroup>
               )}
               <CommandSeparator />
-              <CommandGroup heading="Sua conta">
-                <CommandItem value="meu perfil dados nome telefone" onSelect={() => go("/configuracoes")}>
+              <CommandGroup heading="Você">
+                <CommandItem value="meu nome configurações" onSelect={() => go("/configuracoes")}>
                   <UserRound />
-                  Meu perfil
-                </CommandItem>
-                <CommandItem value="alterar trocar senha" onSelect={() => go("/configuracoes#senha")}>
-                  <KeyRound />
-                  Alterar senha
+                  Meu nome e configurações
                 </CommandItem>
                 <CommandItem
                   value="tema claro escuro aparência"
@@ -118,16 +112,6 @@ export function CommandMenu({ role }: { role: Role }) {
                 >
                   {resolvedTheme === "dark" ? <Sun /> : <Moon />}
                   {resolvedTheme === "dark" ? "Usar tema claro" : "Usar tema escuro"}
-                </CommandItem>
-                <CommandItem
-                  value="sair encerrar sessão logout"
-                  onSelect={() => {
-                    setOpen(false);
-                    void signOut();
-                  }}
-                >
-                  <LogOut />
-                  Sair do sistema
                 </CommandItem>
               </CommandGroup>
             </CommandList>

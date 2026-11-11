@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
-import { KeyRound, Palette, UserRound, UsersRound } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Avatar } from "@/components/ui/avatar";
+import { Palette, Smartphone, UserRound } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/shared/page-header";
-import { NewPasswordForm } from "@/components/forms/new-password-form";
-import { requireModule } from "@/lib/auth/session";
-import { ROLE_DESCRIPTIONS, ROLE_LABELS, isRole } from "@/lib/auth/permissions";
-import { createClient } from "@/lib/supabase/server";
-import { ProfileForm } from "./profile-form";
+import { getCurrentUserName } from "@/lib/access/session";
+import { getAccessConfig } from "@/lib/access/config";
+import { NameForm } from "./name-form";
 import { ThemeChoice } from "./theme-choice";
+import { LeaveButton } from "./leave-button";
 
 export const metadata: Metadata = { title: "Configurações" };
 
@@ -23,78 +20,40 @@ function SectionTitle({ icon: Icon, children }: { icon: typeof UserRound; childr
 }
 
 export default async function SettingsPage() {
-  const user = await requireModule("configuracoes");
-  const isAdmin = user.role === "admin";
-
-  let team: { id: string; full_name: string; email: string; role: string; active: boolean }[] = [];
-  if (isAdmin) {
-    const supabase = await createClient();
-    const { data } = await supabase.from("profiles").select("id, full_name, email, role, active").order("full_name");
-    team = data ?? [];
-  }
+  const name = (await getCurrentUserName()) ?? "";
+  const hasCode = getAccessConfig() !== null;
 
   return (
-    <div className="grid min-w-0 grid-cols-1 gap-6">
-      <PageHeader title="Configurações" description="Seu perfil, senha e aparência do sistema." />
+    <div className="mx-auto grid w-full max-w-2xl grid-cols-1 gap-5">
+      <PageHeader title="Configurações" />
 
       <Card>
         <CardHeader>
-          <SectionTitle icon={UserRound}>Meu perfil</SectionTitle>
-          <CardDescription className="flex flex-wrap items-center gap-2">
-            Função: <Badge variant="info">{ROLE_LABELS[user.role]}</Badge>
-            <span>{ROLE_DESCRIPTIONS[user.role]}</span>
-          </CardDescription>
+          <SectionTitle icon={UserRound}>Quem está usando</SectionTitle>
         </CardHeader>
         <CardContent>
-          <ProfileForm fullName={user.fullName} email={user.email} phone={user.phone} />
+          <NameForm name={name} />
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card id="senha" className="scroll-mt-24">
-          <CardHeader>
-            <SectionTitle icon={KeyRound}>Alterar senha</SectionTitle>
-            <CardDescription>Use uma senha que você não usa em outros sites.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <NewPasswordForm />
-          </CardContent>
-        </Card>
+      <Card>
+        <CardHeader>
+          <SectionTitle icon={Palette}>Aparência</SectionTitle>
+          <CardDescription>O escuro cansa menos a vista à noite.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ThemeChoice />
+        </CardContent>
+      </Card>
 
+      {hasCode && (
         <Card>
           <CardHeader>
-            <SectionTitle icon={Palette}>Aparência</SectionTitle>
-            <CardDescription>O tema claro é o padrão. O escuro cansa menos a vista à noite.</CardDescription>
+            <SectionTitle icon={Smartphone}>Este celular</SectionTitle>
+            <CardDescription>Use se o celular for emprestado, trocado ou perdido.</CardDescription>
           </CardHeader>
           <CardContent>
-            <ThemeChoice />
-          </CardContent>
-        </Card>
-      </div>
-
-      {isAdmin && (
-        <Card>
-          <CardHeader>
-            <SectionTitle icon={UsersRound}>Equipe e permissões</SectionTitle>
-            <CardDescription>
-              Pessoas com acesso ao sistema. Convidar, mudar função e desativar usuários chega na Fase 5; até lá, novos
-              usuários são criados pelo painel do Supabase (veja o README).
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ul className="divide-y rounded-xl border">
-              {team.map((m) => (
-                <li key={m.id} className="flex items-center gap-3 p-3">
-                  <Avatar name={m.full_name || m.email} />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold">{m.full_name || "Sem nome"}</p>
-                    <p className="truncate text-xs text-muted-foreground">{m.email}</p>
-                  </div>
-                  {!m.active && <Badge variant="danger">Desativado</Badge>}
-                  <Badge variant={m.role === "admin" ? "highlight" : "default"}>{isRole(m.role) ? ROLE_LABELS[m.role] : m.role}</Badge>
-                </li>
-              ))}
-            </ul>
+            <LeaveButton />
           </CardContent>
         </Card>
       )}

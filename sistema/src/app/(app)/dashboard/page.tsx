@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { QuickActionList } from "@/components/layout/quick-action-list";
-import { requireModule } from "@/lib/auth/session";
+import { getCurrentUserName } from "@/lib/access/session";
 
 export const metadata: Metadata = { title: "Início" };
 
@@ -17,15 +17,13 @@ function greeting(): string {
 }
 
 export default async function DashboardPage() {
-  const user = await requireModule("dashboard");
-  const firstName = user.fullName.split(" ")[0];
+  const firstName = ((await getCurrentUserName()) ?? "").split(" ")[0];
   const today = new Intl.DateTimeFormat("pt-BR", {
     weekday: "long",
     day: "numeric",
     month: "long",
     timeZone: "America/Sao_Paulo",
   }).format(new Date());
-  const seesMoney = user.role === "admin" || user.role === "financeiro";
 
   return (
     <div className="mx-auto grid w-full max-w-3xl gap-6">
@@ -40,7 +38,7 @@ export default async function DashboardPage() {
         <h2 id="acoes" className="text-base font-semibold">
           O que você quer fazer?
         </h2>
-        <QuickActionList role={user.role} />
+        <QuickActionList />
       </section>
 
       <Card className="flex items-start gap-4 p-5">
@@ -48,11 +46,9 @@ export default async function DashboardPage() {
           <Sparkles className="size-5" aria-hidden />
         </span>
         <div>
-          <h2 className="font-semibold">{seesMoney ? "Seu resumo do mês vai aparecer aqui" : "Seus serviços do dia vão aparecer aqui"}</h2>
+          <h2 className="font-semibold">Seu resumo do mês vai aparecer aqui</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            {seesMoney
-              ? "Quanto entrou, quanto saiu e quanto sobrou, assim que os lançamentos de dinheiro forem liberados."
-              : "Os atendimentos agendados para hoje, assim que a parte de serviços for liberada."}
+            Quanto entrou, quanto saiu e quanto sobrou, assim que os lançamentos de dinheiro forem liberados.
           </p>
         </div>
       </Card>

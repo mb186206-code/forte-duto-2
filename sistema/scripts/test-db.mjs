@@ -3,6 +3,7 @@
 // o script cria usuários e registros de teste e apaga o banco local antes.
 //
 // Uso:  npx supabase db reset && npm run test:db
+// O sistema não tem login: só o servidor acessa o banco (chave secreta).
 import { createClient } from "@supabase/supabase-js";
 import assert from "node:assert/strict";
 
@@ -35,68 +36,48 @@ async function test(name, fn) {
   }
 }
 
-async function makeUser(email, fullName) {
-  const { data, error } = await service.auth.admin.createUser({
-    email,
-    password: "Senha-de-teste-123",
-    email_confirm: true,
-    user_metadata: { full_name: fullName },
-  });
-  if (error) throw error;
-  const client = createClient(URL, ANON, opts);
-  const { error: e2 } = await client.auth.signInWithPassword({ email, password: "Senha-de-teste-123" });
-  if (e2) throw e2;
-  return { id: data.user.id, client };
-}
-
 const ok = ({ data, error }) => {
   if (error) throw new Error(error.message);
   return data;
 };
 
-console.log("Criando usuários de teste…");
-const admin = await makeUser("admin@teste.local", "Admin Teste");
-const fin = await makeUser("financeiro@teste.local", "Financeiro Teste");
-const op = await makeUser("operacional@teste.local", "Operacional Teste");
+// O servidor do sistema envia o nome de quem está usando em "x-app-user".
+const asUser = (name) =>
+  createClient(URL, SERVICE, { ...opts, global: { headers: { "x-app-user": name } } });
+const fin = { client: asUser("Daniel") };
+const op = { client: asUser("Carlos") };
 
-console.log("\nPerfis e permissões");
-await test("primeiro usuário vira administrador; demais entram como operacional", async () => {
-  const rows = ok(await service.from("profiles").select("email, role").order("email"));
-  const byEmail = Object.fromEntries(rows.map((r) => [r.email, r.role]));
-  assert.equal(byEmail["admin@teste.local"], "admin");
-  assert.equal(byEmail["financeiro@teste.local"], "operacional");
-});
+const TABLES = [
+  "company_settings", "expense_categories", "revenue_categories", "payment_methods", "service_types",
+  "customer_sources", "accounts", "transactions", "funds", "fund_movements", "campaigns", "advertisements",
+  "campaign_metrics", "customers", "customer_attributions", "budgets", "budget_items", "services",
+  "service_items", "attachments", "audit_logs",
+];
+const VIEWS = ["account_balances", "fund_balances", "financial_position", "budget_totals", "service_costs"];
 
-await test("admin promove usuário a financeiro", async () => {
-  ok(await admin.client.from("profiles").update({ role: "financeiro" }).eq("id", fin.id));
-  const row = ok(await service.from("profiles").select("role").eq("id", fin.id).single());
-  assert.equal(row.role, "financeiro");
-});
-
-await test("operacional não consegue mudar a própria função", async () => {
-  const { error } = await op.client.from("profiles").update({ role: "admin" }).eq("id", op.id);
-  assert.ok(error, "deveria falhar");
-  const row = ok(await service.from("profiles").select("role").eq("id", op.id).single());
-  assert.equal(row.role, "operacional");
-});
-
-await test("usuário edita o próprio nome", async () => {
-  ok(await op.client.from("profiles").update({ full_name: "Operacional Editado" }).eq("id", op.id));
-  const row = ok(await service.from("profiles").select("full_name").eq("id", op.id).single());
-  assert.equal(row.full_name, "Operacional Editado");
-});
-
-await test("último administrador não pode se rebaixar", async () => {
-  const { error } = await admin.client.from("profiles").update({ role: "operacional" }).eq("id", admin.id);
-  assert.ok(error, "deveria falhar");
-  assert.match(error.message, /pelo menos um administrador/);
-});
-
-await test("visitante anônimo não lê nada", async () => {
-  for (const t of ["profiles", "customers", "transactions", "accounts", "company_settings"]) {
+console.log("Acesso público bloqueado (chave do navegador não acessa nada)");
+await test("chave pública não lê nenhuma tabela nem view", async () => {
+  for (const t of [...TABLES, ...VIEWS]) {
     const { data, error } = await anon.from(t).select("*").limit(1);
-    assert.ok(error || (data ?? []).length === 0, `anônimo leu ${t}`);
+    assert.ok(error || (data ?? []).length === 0, `chave pública leu ${t}`);
+    if (!error) assert.fail(`${t} deveria negar acesso, não só voltar vazio`);
   }
+});
+
+await test("chave pública não grava nem executa funções", async () => {
+  const { error } = await anon.from("customers").insert({ name: "Invasor" });
+  assert.ok(error);
+  const { error: e2 } = await anon.rpc("convert_budget_to_service", { p_budget_id: "00000000-0000-0000-0000-000000000000" });
+  assert.ok(e2);
+  const rows = ok(await service.from("customers").select("id").eq("name", "Invasor"));
+  assert.equal(rows.length, 0);
+});
+
+await test("bucket de anexos é privado", async () => {
+  const { data } = await anon.storage.from("anexos").list();
+  assert.equal((data ?? []).length, 0);
+  const b = ok(await service.storage.getBucket("anexos"));
+  assert.equal(b.public, false);
 });
 
 console.log("\nFinanceiro: saldos, transferências e fundos");
@@ -106,16 +87,6 @@ await test("financeiro cria contas", async () => {
   acc2 = ok(await fin.client.from("accounts").insert({ name: "Caixa Teste", type: "caixa", opening_balance: 0, opening_date: "2026-01-01" }).select().single());
 });
 
-await test("operacional não vê nem cria contas/movimentações", async () => {
-  const rows = ok(await op.client.from("accounts").select("*"));
-  assert.equal(rows.length, 0);
-  const { error } = await op.client.from("accounts").insert({ name: "Invasão" });
-  assert.ok(error);
-  const tx = ok(await op.client.from("transactions").select("*"));
-  assert.equal(tx.length, 0);
-  const pos = ok(await op.client.from("financial_position").select("*").single());
-  assert.equal(Number(pos.available_balance), 0, "operacional não deve enxergar saldo");
-});
 
 const cat = async (table, name) => ok(await fin.client.from(table).select("id").eq("name", name).single()).id;
 
@@ -189,12 +160,6 @@ await test("percentual da meta do fundo", async () => {
   assert.equal(Number(f.target_percent), 25);
 });
 
-await test("financeiro não exclui movimentações (só administrador)", async () => {
-  const before = ok(await fin.client.from("transactions").select("id"));
-  await fin.client.from("transactions").delete().eq("description", "Canos");
-  const after = ok(await fin.client.from("transactions").select("id"));
-  assert.equal(after.length, before.length);
-});
 
 console.log("\nComercial: clientes, orçamentos e serviços");
 let customer;
@@ -249,30 +214,22 @@ await test("atribuição 'rastreada' exige evidência (UTM ou click id)", async 
   ok(await op.client.from("customer_attributions").insert({ customer_id: customer.id, campaign_id: camp.id, attribution_type: "rastreada", utm_source: "instagram", utm_campaign: "teste-insta" }));
 });
 
-await test("operacional não vê métricas de investimento das campanhas", async () => {
-  const rows = ok(await op.client.from("campaign_metrics").select("*"));
-  assert.equal(rows.length, 0);
-});
 
 console.log("\nAuditoria");
-await test("alterações ficam registradas e só o administrador vê o histórico", async () => {
-  const logs = ok(await admin.client.from("audit_logs").select("table_name, action, changed_by").eq("table_name", "transactions"));
+await test("cada alteração fica no histórico com o nome de quem fez", async () => {
+  const logs = ok(await service.from("audit_logs").select("table_name, action, changed_by").eq("table_name", "transactions"));
   assert.ok(logs.length >= 8);
-  assert.ok(logs.every((l) => l.changed_by === fin.id));
-  const finLogs = ok(await fin.client.from("audit_logs").select("id"));
-  assert.equal(finLogs.length, 0);
+  assert.ok(logs.every((l) => l.changed_by === "Daniel"));
+  const custLogs = ok(await service.from("audit_logs").select("changed_by").eq("table_name", "customers"));
+  assert.ok(custLogs.some((l) => l.changed_by === "Carlos"));
 });
 
-await test("ninguém escreve direto no histórico", async () => {
-  const { error } = await admin.client.from("audit_logs").insert({ table_name: "x", action: "INSERT" });
+await test("histórico não pode ser alterado nem apagado", async () => {
+  const one = ok(await service.from("audit_logs").select("id").limit(1).single());
+  const { error } = await service.from("audit_logs").update({ changed_by: "outro" }).eq("id", one.id);
   assert.ok(error);
-});
-
-await test("usuário desativado perde todo o acesso", async () => {
-  ok(await admin.client.from("profiles").update({ active: false }).eq("id", fin.id));
-  const rows = ok(await fin.client.from("accounts").select("*"));
-  assert.equal(rows.length, 0);
-  ok(await admin.client.from("profiles").update({ active: true }).eq("id", fin.id));
+  const { error: e2 } = await service.from("audit_logs").delete().eq("id", one.id);
+  assert.ok(e2);
 });
 
 console.log(`\n${passed} testes passaram${process.exitCode ? " — HÁ FALHAS" : ""}.`);

@@ -21,7 +21,7 @@ create table public.campaigns (
   external_id       text check (char_length(external_id) <= 120),   -- ID da campanha na plataforma
   utm_campaign      text check (utm_campaign ~ '^[a-z0-9][a-z0-9_-]{0,79}$'),
   notes             text check (char_length(notes) <= 2000),
-  created_by        uuid references auth.users (id) on delete set null default auth.uid(),
+  created_by        text not null default public.current_actor(),
   created_at        timestamptz not null default now(),
   updated_at        timestamptz not null default now(),
   constraint campaigns_dates check (end_date is null or start_date is null or end_date >= start_date)
@@ -62,7 +62,7 @@ create table public.campaign_metrics (
   spend               numeric(14,2) not null default 0 check (spend >= 0),   -- investimento real no período
   source              text not null default 'manual' check (source in ('manual', 'meta_ads', 'google_ads')),
   notes               text check (char_length(notes) <= 1000),
-  created_by          uuid references auth.users (id) on delete set null default auth.uid(),
+  created_by          text not null default public.current_actor(),
   created_at          timestamptz not null default now(),
   updated_at          timestamptz not null default now(),
   constraint campaign_metrics_period check (period_end >= period_start)
@@ -91,7 +91,7 @@ create table public.customers (
   source_id          uuid references public.customer_sources (id) on delete set null,  -- origem DECLARADA
   status             public.customer_status not null default 'novo_contato',
   notes              text check (char_length(notes) <= 2000),
-  created_by         uuid references auth.users (id) on delete set null default auth.uid(),
+  created_by         text not null default public.current_actor(),
   created_at         timestamptz not null default now(),
   updated_at         timestamptz not null default now()
 );
@@ -124,7 +124,7 @@ create table public.customer_attributions (
   occurred_at       timestamptz not null default now(),
   is_primary        boolean not null default true,
   notes             text check (char_length(notes) <= 1000),
-  created_by        uuid references auth.users (id) on delete set null default auth.uid(),
+  created_by        text not null default public.current_actor(),
   created_at        timestamptz not null default now(),
   updated_at        timestamptz not null default now(),
   -- "rastreada" exige evidência técnica (UTM ou click id)
@@ -160,7 +160,7 @@ create table public.budgets (
   status           public.budget_status not null default 'aguardando',
   service_id       uuid unique,   -- serviço gerado a partir deste orçamento (FK abaixo)
   notes            text check (char_length(notes) <= 2000),
-  created_by       uuid references auth.users (id) on delete set null default auth.uid(),
+  created_by       text not null default public.current_actor(),
   created_at       timestamptz not null default now(),
   updated_at       timestamptz not null default now(),
   constraint budgets_validity check (valid_until is null or valid_until >= issue_date)
@@ -197,14 +197,13 @@ create table public.services (
   description       text check (char_length(description) <= 2000),
   address           text check (char_length(address) <= 300),
   responsible_name  text check (char_length(responsible_name) <= 120),
-  responsible_id    uuid references public.profiles (id) on delete set null,
   requested_date    date not null default current_date,
   scheduled_at      timestamptz,
   completed_at      timestamptz,
   contract_value    numeric(14,2) check (contract_value is null or contract_value >= 0),
   status            public.service_status not null default 'solicitado',
   notes             text check (char_length(notes) <= 2000),
-  created_by        uuid references auth.users (id) on delete set null default auth.uid(),
+  created_by        text not null default public.current_actor(),
   created_at        timestamptz not null default now(),
   updated_at        timestamptz not null default now()
 );
@@ -212,7 +211,6 @@ create index services_customer_idx on public.services (customer_id);
 create index services_status_idx on public.services (status);
 create index services_scheduled_idx on public.services (scheduled_at);
 create index services_service_type_idx on public.services (service_type_id);
-create index services_responsible_idx on public.services (responsible_id);
 
 comment on column public.services.contract_value is 'Valor combinado com o cliente. NÃO é dinheiro recebido: o recebimento é uma transação de receita ligada ao serviço.';
 
@@ -242,7 +240,7 @@ alter table public.transactions
 
 -- ---------------------------------------------------------------------
 -- Converter orçamento aprovado em serviço (uma transação, um clique)
--- security invoker: respeita as permissões de quem chama.
+-- Executada pelo servidor do sistema.
 -- ---------------------------------------------------------------------
 create or replace function public.convert_budget_to_service(p_budget_id uuid)
 returns uuid
@@ -286,8 +284,8 @@ begin
 end;
 $$;
 
-revoke all on function public.convert_budget_to_service(uuid) from public, anon;
-grant execute on function public.convert_budget_to_service(uuid) to authenticated;
+revoke all on function public.convert_budget_to_service(uuid) from public, anon, authenticated;
+grant execute on function public.convert_budget_to_service(uuid) to service_role;
 
 -- ---------------------------------------------------------------------
 -- Anexos (comprovantes, fotos antes/depois). Arquivos no Storage,
@@ -302,7 +300,7 @@ create table public.attachments (
   file_name     text not null check (char_length(file_name) <= 255),
   mime_type     text check (char_length(mime_type) <= 120),
   size_bytes    bigint check (size_bytes is null or (size_bytes >= 0 and size_bytes <= 20971520)),
-  created_by    uuid references auth.users (id) on delete set null default auth.uid(),
+  created_by    text not null default public.current_actor(),
   created_at    timestamptz not null default now()
 );
 create index attachments_entity_idx on public.attachments (entity_type, entity_id);

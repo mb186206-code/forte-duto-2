@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import type { Role } from "@/lib/auth/permissions";
 import { QUICK_ACTIONS, isAvailable, type QuickAction } from "./navigation";
 
 const TONE: Record<QuickAction["tone"], string> = {
@@ -15,8 +14,8 @@ const TONE: Record<QuickAction["tone"], string> = {
  * Botões grandes de ação rápida (celular e início). Ações que ainda não
  * foram liberadas aparecem apagadas com "Em breve", nunca como botão falso.
  */
-export function QuickActionList({ role, onSelect, className }: { role: Role; onSelect?: () => void; className?: string }) {
-  const actions = QUICK_ACTIONS.filter((a) => a.roles.includes(role));
+export function QuickActionList({ onSelect, className }: { onSelect?: () => void; className?: string }) {
+  const actions = QUICK_ACTIONS;
   return (
     <div className={cn("grid grid-cols-2 gap-3", className)}>
       {actions.map((a, i) => {

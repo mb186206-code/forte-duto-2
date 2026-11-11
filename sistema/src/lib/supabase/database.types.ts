@@ -25,14 +25,14 @@ export type Database = {
           Tables: {
             "accounts": {
                   Row: {
-                    "active": boolean,"created_at": string,"created_by": string | null,"id": string,"name": string,"notes": string | null,"opening_balance": number,"opening_date": string,"type": Database["public"]['Enums']["account_type"],"updated_at": string
+                    "active": boolean,"created_at": string,"created_by": string,"id": string,"name": string,"notes": string | null,"opening_balance": number,"opening_date": string,"type": Database["public"]['Enums']["account_type"],"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "active"?: boolean,"created_at"?: string,"created_by"?: string | null,"id"?: string,"name": string,"notes"?: string | null,"opening_balance"?: number,"opening_date"?: string,"type"?: Database["public"]['Enums']["account_type"],"updated_at"?: string
+                    "active"?: boolean,"created_at"?: string,"created_by"?: string,"id"?: string,"name": string,"notes"?: string | null,"opening_balance"?: number,"opening_date"?: string,"type"?: Database["public"]['Enums']["account_type"],"updated_at"?: string
                   }
                   Update: {
-                    "active"?: boolean,"created_at"?: string,"created_by"?: string | null,"id"?: string,"name"?: string,"notes"?: string | null,"opening_balance"?: number,"opening_date"?: string,"type"?: Database["public"]['Enums']["account_type"],"updated_at"?: string
+                    "active"?: boolean,"created_at"?: string,"created_by"?: string,"id"?: string,"name"?: string,"notes"?: string | null,"opening_balance"?: number,"opening_date"?: string,"type"?: Database["public"]['Enums']["account_type"],"updated_at"?: string
                   }
                   Relationships: [
                     
@@ -59,28 +59,28 @@ isOneToOne: false
                   ]
                 },"attachments": {
                   Row: {
-                    "category": string,"created_at": string,"created_by": string | null,"entity_id": string,"entity_type": string,"file_name": string,"id": string,"mime_type": string | null,"size_bytes": number | null,"storage_path": string
+                    "category": string,"created_at": string,"created_by": string,"entity_id": string,"entity_type": string,"file_name": string,"id": string,"mime_type": string | null,"size_bytes": number | null,"storage_path": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "category"?: string,"created_at"?: string,"created_by"?: string | null,"entity_id": string,"entity_type": string,"file_name": string,"id"?: string,"mime_type"?: string | null,"size_bytes"?: number | null,"storage_path": string
+                    "category"?: string,"created_at"?: string,"created_by"?: string,"entity_id": string,"entity_type": string,"file_name": string,"id"?: string,"mime_type"?: string | null,"size_bytes"?: number | null,"storage_path": string
                   }
                   Update: {
-                    "category"?: string,"created_at"?: string,"created_by"?: string | null,"entity_id"?: string,"entity_type"?: string,"file_name"?: string,"id"?: string,"mime_type"?: string | null,"size_bytes"?: number | null,"storage_path"?: string
+                    "category"?: string,"created_at"?: string,"created_by"?: string,"entity_id"?: string,"entity_type"?: string,"file_name"?: string,"id"?: string,"mime_type"?: string | null,"size_bytes"?: number | null,"storage_path"?: string
                   }
                   Relationships: [
                     
                   ]
                 },"audit_logs": {
                   Row: {
-                    "action": string,"changed_at": string,"changed_by": string | null,"id": number,"new_data": Json | null,"old_data": Json | null,"record_id": string | null,"table_name": string
+                    "action": string,"changed_at": string,"changed_by": string,"id": number,"new_data": Json | null,"old_data": Json | null,"record_id": string | null,"table_name": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "action": string,"changed_at"?: string,"changed_by"?: string | null,"id"?: never,"new_data"?: Json | null,"old_data"?: Json | null,"record_id"?: string | null,"table_name": string
+                    "action": string,"changed_at"?: string,"changed_by"?: string,"id"?: never,"new_data"?: Json | null,"old_data"?: Json | null,"record_id"?: string | null,"table_name": string
                   }
                   Update: {
-                    "action"?: string,"changed_at"?: string,"changed_by"?: string | null,"id"?: never,"new_data"?: Json | null,"old_data"?: Json | null,"record_id"?: string | null,"table_name"?: string
+                    "action"?: string,"changed_at"?: string,"changed_by"?: string,"id"?: never,"new_data"?: Json | null,"old_data"?: Json | null,"record_id"?: string | null,"table_name"?: string
                   }
                   Relationships: [
                     
@@ -113,14 +113,14 @@ isOneToOne: false
                   ]
                 },"budgets": {
                   Row: {
-                    "address": string | null,"created_at": string,"created_by": string | null,"customer_id": string,"description": string | null,"discount": number,"id": string,"issue_date": string,"notes": string | null,"number": number,"service_id": string | null,"service_type_id": string | null,"status": Database["public"]['Enums']["budget_status"],"updated_at": string,"valid_until": string | null
+                    "address": string | null,"created_at": string,"created_by": string,"customer_id": string,"description": string | null,"discount": number,"id": string,"issue_date": string,"notes": string | null,"number": number,"service_id": string | null,"service_type_id": string | null,"status": Database["public"]['Enums']["budget_status"],"updated_at": string,"valid_until": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "address"?: string | null,"created_at"?: string,"created_by"?: string | null,"customer_id": string,"description"?: string | null,"discount"?: number,"id"?: string,"issue_date"?: string,"notes"?: string | null,"number"?: never,"service_id"?: string | null,"service_type_id"?: string | null,"status"?: Database["public"]['Enums']["budget_status"],"updated_at"?: string,"valid_until"?: string | null
+                    "address"?: string | null,"created_at"?: string,"created_by"?: string,"customer_id": string,"description"?: string | null,"discount"?: number,"id"?: string,"issue_date"?: string,"notes"?: string | null,"number"?: never,"service_id"?: string | null,"service_type_id"?: string | null,"status"?: Database["public"]['Enums']["budget_status"],"updated_at"?: string,"valid_until"?: string | null
                   }
                   Update: {
-                    "address"?: string | null,"created_at"?: string,"created_by"?: string | null,"customer_id"?: string,"description"?: string | null,"discount"?: number,"id"?: string,"issue_date"?: string,"notes"?: string | null,"number"?: never,"service_id"?: string | null,"service_type_id"?: string | null,"status"?: Database["public"]['Enums']["budget_status"],"updated_at"?: string,"valid_until"?: string | null
+                    "address"?: string | null,"created_at"?: string,"created_by"?: string,"customer_id"?: string,"description"?: string | null,"discount"?: number,"id"?: string,"issue_date"?: string,"notes"?: string | null,"number"?: never,"service_id"?: string | null,"service_type_id"?: string | null,"status"?: Database["public"]['Enums']["budget_status"],"updated_at"?: string,"valid_until"?: string | null
                   }
                   Relationships: [
                     {
@@ -151,14 +151,14 @@ isOneToOne: false
                   ]
                 },"campaign_metrics": {
                   Row: {
-                    "advertisement_id": string | null,"campaign_id": string,"clicks": number,"conversations": number,"created_at": string,"created_by": string | null,"id": string,"impressions": number,"notes": string | null,"period_end": string,"period_start": string,"reach": number,"source": string,"spend": number,"updated_at": string
+                    "advertisement_id": string | null,"campaign_id": string,"clicks": number,"conversations": number,"created_at": string,"created_by": string,"id": string,"impressions": number,"notes": string | null,"period_end": string,"period_start": string,"reach": number,"source": string,"spend": number,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "advertisement_id"?: string | null,"campaign_id": string,"clicks"?: number,"conversations"?: number,"created_at"?: string,"created_by"?: string | null,"id"?: string,"impressions"?: number,"notes"?: string | null,"period_end": string,"period_start": string,"reach"?: number,"source"?: string,"spend"?: number,"updated_at"?: string
+                    "advertisement_id"?: string | null,"campaign_id": string,"clicks"?: number,"conversations"?: number,"created_at"?: string,"created_by"?: string,"id"?: string,"impressions"?: number,"notes"?: string | null,"period_end": string,"period_start": string,"reach"?: number,"source"?: string,"spend"?: number,"updated_at"?: string
                   }
                   Update: {
-                    "advertisement_id"?: string | null,"campaign_id"?: string,"clicks"?: number,"conversations"?: number,"created_at"?: string,"created_by"?: string | null,"id"?: string,"impressions"?: number,"notes"?: string | null,"period_end"?: string,"period_start"?: string,"reach"?: number,"source"?: string,"spend"?: number,"updated_at"?: string
+                    "advertisement_id"?: string | null,"campaign_id"?: string,"clicks"?: number,"conversations"?: number,"created_at"?: string,"created_by"?: string,"id"?: string,"impressions"?: number,"notes"?: string | null,"period_end"?: string,"period_start"?: string,"reach"?: number,"source"?: string,"spend"?: number,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -177,14 +177,14 @@ isOneToOne: false
                   ]
                 },"campaigns": {
                   Row: {
-                    "created_at": string,"created_by": string | null,"end_date": string | null,"external_id": string | null,"id": string,"name": string,"notes": string | null,"planned_budget": number | null,"platform": Database["public"]['Enums']["ad_platform"],"service_type_id": string | null,"start_date": string | null,"status": Database["public"]['Enums']["campaign_status"],"updated_at": string,"utm_campaign": string | null
+                    "created_at": string,"created_by": string,"end_date": string | null,"external_id": string | null,"id": string,"name": string,"notes": string | null,"planned_budget": number | null,"platform": Database["public"]['Enums']["ad_platform"],"service_type_id": string | null,"start_date": string | null,"status": Database["public"]['Enums']["campaign_status"],"updated_at": string,"utm_campaign": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"created_by"?: string | null,"end_date"?: string | null,"external_id"?: string | null,"id"?: string,"name": string,"notes"?: string | null,"planned_budget"?: number | null,"platform": Database["public"]['Enums']["ad_platform"],"service_type_id"?: string | null,"start_date"?: string | null,"status"?: Database["public"]['Enums']["campaign_status"],"updated_at"?: string,"utm_campaign"?: string | null
+                    "created_at"?: string,"created_by"?: string,"end_date"?: string | null,"external_id"?: string | null,"id"?: string,"name": string,"notes"?: string | null,"planned_budget"?: number | null,"platform": Database["public"]['Enums']["ad_platform"],"service_type_id"?: string | null,"start_date"?: string | null,"status"?: Database["public"]['Enums']["campaign_status"],"updated_at"?: string,"utm_campaign"?: string | null
                   }
                   Update: {
-                    "created_at"?: string,"created_by"?: string | null,"end_date"?: string | null,"external_id"?: string | null,"id"?: string,"name"?: string,"notes"?: string | null,"planned_budget"?: number | null,"platform"?: Database["public"]['Enums']["ad_platform"],"service_type_id"?: string | null,"start_date"?: string | null,"status"?: Database["public"]['Enums']["campaign_status"],"updated_at"?: string,"utm_campaign"?: string | null
+                    "created_at"?: string,"created_by"?: string,"end_date"?: string | null,"external_id"?: string | null,"id"?: string,"name"?: string,"notes"?: string | null,"planned_budget"?: number | null,"platform"?: Database["public"]['Enums']["ad_platform"],"service_type_id"?: string | null,"start_date"?: string | null,"status"?: Database["public"]['Enums']["campaign_status"],"updated_at"?: string,"utm_campaign"?: string | null
                   }
                   Relationships: [
                     {
@@ -211,14 +211,14 @@ isOneToOne: false
                   ]
                 },"customer_attributions": {
                   Row: {
-                    "advertisement_id": string | null,"attribution_type": Database["public"]['Enums']["attribution_type"],"campaign_id": string | null,"click_id": string | null,"created_at": string,"created_by": string | null,"customer_id": string,"id": string,"is_primary": boolean,"landing_url": string | null,"notes": string | null,"occurred_at": string,"updated_at": string,"utm_campaign": string | null,"utm_content": string | null,"utm_medium": string | null,"utm_source": string | null,"utm_term": string | null
+                    "advertisement_id": string | null,"attribution_type": Database["public"]['Enums']["attribution_type"],"campaign_id": string | null,"click_id": string | null,"created_at": string,"created_by": string,"customer_id": string,"id": string,"is_primary": boolean,"landing_url": string | null,"notes": string | null,"occurred_at": string,"updated_at": string,"utm_campaign": string | null,"utm_content": string | null,"utm_medium": string | null,"utm_source": string | null,"utm_term": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "advertisement_id"?: string | null,"attribution_type": Database["public"]['Enums']["attribution_type"],"campaign_id"?: string | null,"click_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"customer_id": string,"id"?: string,"is_primary"?: boolean,"landing_url"?: string | null,"notes"?: string | null,"occurred_at"?: string,"updated_at"?: string,"utm_campaign"?: string | null,"utm_content"?: string | null,"utm_medium"?: string | null,"utm_source"?: string | null,"utm_term"?: string | null
+                    "advertisement_id"?: string | null,"attribution_type": Database["public"]['Enums']["attribution_type"],"campaign_id"?: string | null,"click_id"?: string | null,"created_at"?: string,"created_by"?: string,"customer_id": string,"id"?: string,"is_primary"?: boolean,"landing_url"?: string | null,"notes"?: string | null,"occurred_at"?: string,"updated_at"?: string,"utm_campaign"?: string | null,"utm_content"?: string | null,"utm_medium"?: string | null,"utm_source"?: string | null,"utm_term"?: string | null
                   }
                   Update: {
-                    "advertisement_id"?: string | null,"attribution_type"?: Database["public"]['Enums']["attribution_type"],"campaign_id"?: string | null,"click_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"customer_id"?: string,"id"?: string,"is_primary"?: boolean,"landing_url"?: string | null,"notes"?: string | null,"occurred_at"?: string,"updated_at"?: string,"utm_campaign"?: string | null,"utm_content"?: string | null,"utm_medium"?: string | null,"utm_source"?: string | null,"utm_term"?: string | null
+                    "advertisement_id"?: string | null,"attribution_type"?: Database["public"]['Enums']["attribution_type"],"campaign_id"?: string | null,"click_id"?: string | null,"created_at"?: string,"created_by"?: string,"customer_id"?: string,"id"?: string,"is_primary"?: boolean,"landing_url"?: string | null,"notes"?: string | null,"occurred_at"?: string,"updated_at"?: string,"utm_campaign"?: string | null,"utm_content"?: string | null,"utm_medium"?: string | null,"utm_source"?: string | null,"utm_term"?: string | null
                   }
                   Relationships: [
                     {
@@ -257,14 +257,14 @@ isOneToOne: false
                   ]
                 },"customers": {
                   Row: {
-                    "address": string | null,"created_at": string,"created_by": string | null,"estimated_value": number | null,"id": string,"name": string,"notes": string | null,"phone": string | null,"phone_digits": string | null,"requested_service": string | null,"source_id": string | null,"status": Database["public"]['Enums']["customer_status"],"updated_at": string,"whatsapp": string | null
+                    "address": string | null,"created_at": string,"created_by": string,"estimated_value": number | null,"id": string,"name": string,"notes": string | null,"phone": string | null,"phone_digits": string | null,"requested_service": string | null,"source_id": string | null,"status": Database["public"]['Enums']["customer_status"],"updated_at": string,"whatsapp": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "address"?: string | null,"created_at"?: string,"created_by"?: string | null,"estimated_value"?: number | null,"id"?: string,"name": string,"notes"?: string | null,"phone"?: string | null,"phone_digits"?: never,"requested_service"?: string | null,"source_id"?: string | null,"status"?: Database["public"]['Enums']["customer_status"],"updated_at"?: string,"whatsapp"?: string | null
+                    "address"?: string | null,"created_at"?: string,"created_by"?: string,"estimated_value"?: number | null,"id"?: string,"name": string,"notes"?: string | null,"phone"?: string | null,"phone_digits"?: never,"requested_service"?: string | null,"source_id"?: string | null,"status"?: Database["public"]['Enums']["customer_status"],"updated_at"?: string,"whatsapp"?: string | null
                   }
                   Update: {
-                    "address"?: string | null,"created_at"?: string,"created_by"?: string | null,"estimated_value"?: number | null,"id"?: string,"name"?: string,"notes"?: string | null,"phone"?: string | null,"phone_digits"?: never,"requested_service"?: string | null,"source_id"?: string | null,"status"?: Database["public"]['Enums']["customer_status"],"updated_at"?: string,"whatsapp"?: string | null
+                    "address"?: string | null,"created_at"?: string,"created_by"?: string,"estimated_value"?: number | null,"id"?: string,"name"?: string,"notes"?: string | null,"phone"?: string | null,"phone_digits"?: never,"requested_service"?: string | null,"source_id"?: string | null,"status"?: Database["public"]['Enums']["customer_status"],"updated_at"?: string,"whatsapp"?: string | null
                   }
                   Relationships: [
                     {
@@ -291,14 +291,14 @@ isOneToOne: false
                   ]
                 },"fund_movements": {
                   Row: {
-                    "amount": number,"created_at": string,"created_by": string | null,"fund_id": string,"id": string,"kind": Database["public"]['Enums']["fund_movement_kind"],"movement_date": string,"notes": string | null,"updated_at": string
+                    "amount": number,"created_at": string,"created_by": string,"fund_id": string,"id": string,"kind": Database["public"]['Enums']["fund_movement_kind"],"movement_date": string,"notes": string | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "amount": number,"created_at"?: string,"created_by"?: string | null,"fund_id": string,"id"?: string,"kind": Database["public"]['Enums']["fund_movement_kind"],"movement_date"?: string,"notes"?: string | null,"updated_at"?: string
+                    "amount": number,"created_at"?: string,"created_by"?: string,"fund_id": string,"id"?: string,"kind": Database["public"]['Enums']["fund_movement_kind"],"movement_date"?: string,"notes"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "amount"?: number,"created_at"?: string,"created_by"?: string | null,"fund_id"?: string,"id"?: string,"kind"?: Database["public"]['Enums']["fund_movement_kind"],"movement_date"?: string,"notes"?: string | null,"updated_at"?: string
+                    "amount"?: number,"created_at"?: string,"created_by"?: string,"fund_id"?: string,"id"?: string,"kind"?: Database["public"]['Enums']["fund_movement_kind"],"movement_date"?: string,"notes"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -317,14 +317,14 @@ isOneToOne: false
                   ]
                 },"funds": {
                   Row: {
-                    "account_id": string | null,"active": boolean,"created_at": string,"created_by": string | null,"description": string | null,"id": string,"name": string,"notes": string | null,"target_amount": number | null,"target_date": string | null,"updated_at": string
+                    "account_id": string | null,"active": boolean,"created_at": string,"created_by": string,"description": string | null,"id": string,"name": string,"notes": string | null,"target_amount": number | null,"target_date": string | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "account_id"?: string | null,"active"?: boolean,"created_at"?: string,"created_by"?: string | null,"description"?: string | null,"id"?: string,"name": string,"notes"?: string | null,"target_amount"?: number | null,"target_date"?: string | null,"updated_at"?: string
+                    "account_id"?: string | null,"active"?: boolean,"created_at"?: string,"created_by"?: string,"description"?: string | null,"id"?: string,"name": string,"notes"?: string | null,"target_amount"?: number | null,"target_date"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "account_id"?: string | null,"active"?: boolean,"created_at"?: string,"created_by"?: string | null,"description"?: string | null,"id"?: string,"name"?: string,"notes"?: string | null,"target_amount"?: number | null,"target_date"?: string | null,"updated_at"?: string
+                    "account_id"?: string | null,"active"?: boolean,"created_at"?: string,"created_by"?: string,"description"?: string | null,"id"?: string,"name"?: string,"notes"?: string | null,"target_amount"?: number | null,"target_date"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -351,20 +351,6 @@ isOneToOne: false
                   }
                   Update: {
                     "active"?: boolean,"created_at"?: string,"id"?: string,"name"?: string,"sort_order"?: number,"updated_at"?: string
-                  }
-                  Relationships: [
-                    
-                  ]
-                },"profiles": {
-                  Row: {
-                    "active": boolean,"created_at": string,"email": string,"full_name": string,"id": string,"phone": string | null,"role": Database["public"]['Enums']["app_role"],"updated_at": string
-                  }
-                  ComputedFields: never
-                  Insert: {
-                    "active"?: boolean,"created_at"?: string,"email"?: string,"full_name"?: string,"id": string,"phone"?: string | null,"role"?: Database["public"]['Enums']["app_role"],"updated_at"?: string
-                  }
-                  Update: {
-                    "active"?: boolean,"created_at"?: string,"email"?: string,"full_name"?: string,"id"?: string,"phone"?: string | null,"role"?: Database["public"]['Enums']["app_role"],"updated_at"?: string
                   }
                   Relationships: [
                     
@@ -425,14 +411,14 @@ isOneToOne: false
                   ]
                 },"services": {
                   Row: {
-                    "address": string | null,"completed_at": string | null,"contract_value": number | null,"created_at": string,"created_by": string | null,"customer_id": string,"description": string | null,"id": string,"notes": string | null,"requested_date": string,"responsible_id": string | null,"responsible_name": string | null,"scheduled_at": string | null,"service_type_id": string | null,"status": Database["public"]['Enums']["service_status"],"updated_at": string
+                    "address": string | null,"completed_at": string | null,"contract_value": number | null,"created_at": string,"created_by": string,"customer_id": string,"description": string | null,"id": string,"notes": string | null,"requested_date": string,"responsible_name": string | null,"scheduled_at": string | null,"service_type_id": string | null,"status": Database["public"]['Enums']["service_status"],"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "address"?: string | null,"completed_at"?: string | null,"contract_value"?: number | null,"created_at"?: string,"created_by"?: string | null,"customer_id": string,"description"?: string | null,"id"?: string,"notes"?: string | null,"requested_date"?: string,"responsible_id"?: string | null,"responsible_name"?: string | null,"scheduled_at"?: string | null,"service_type_id"?: string | null,"status"?: Database["public"]['Enums']["service_status"],"updated_at"?: string
+                    "address"?: string | null,"completed_at"?: string | null,"contract_value"?: number | null,"created_at"?: string,"created_by"?: string,"customer_id": string,"description"?: string | null,"id"?: string,"notes"?: string | null,"requested_date"?: string,"responsible_name"?: string | null,"scheduled_at"?: string | null,"service_type_id"?: string | null,"status"?: Database["public"]['Enums']["service_status"],"updated_at"?: string
                   }
                   Update: {
-                    "address"?: string | null,"completed_at"?: string | null,"contract_value"?: number | null,"created_at"?: string,"created_by"?: string | null,"customer_id"?: string,"description"?: string | null,"id"?: string,"notes"?: string | null,"requested_date"?: string,"responsible_id"?: string | null,"responsible_name"?: string | null,"scheduled_at"?: string | null,"service_type_id"?: string | null,"status"?: Database["public"]['Enums']["service_status"],"updated_at"?: string
+                    "address"?: string | null,"completed_at"?: string | null,"contract_value"?: number | null,"created_at"?: string,"created_by"?: string,"customer_id"?: string,"description"?: string | null,"id"?: string,"notes"?: string | null,"requested_date"?: string,"responsible_name"?: string | null,"scheduled_at"?: string | null,"service_type_id"?: string | null,"status"?: Database["public"]['Enums']["service_status"],"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -440,12 +426,6 @@ isOneToOne: false
       columns: ["customer_id"]
 isOneToOne: false
       referencedRelation: "customers"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "services_responsible_id_fkey"
-      columns: ["responsible_id"]
-isOneToOne: false
-      referencedRelation: "profiles"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "services_service_type_id_fkey"
@@ -457,14 +437,14 @@ isOneToOne: false
                   ]
                 },"transactions": {
                   Row: {
-                    "account_id": string | null,"amount": number,"campaign_id": string | null,"competence_date": string,"created_at": string,"created_by": string | null,"customer_id": string | null,"description": string,"due_date": string | null,"expense_category_id": string | null,"id": string,"kind": Database["public"]['Enums']["transaction_kind"],"notes": string | null,"payment_method_id": string | null,"revenue_category_id": string | null,"service_id": string | null,"settled_date": string | null,"status": Database["public"]['Enums']["transaction_status"],"supplier": string | null,"to_account_id": string | null,"updated_at": string
+                    "account_id": string | null,"amount": number,"campaign_id": string | null,"competence_date": string,"created_at": string,"created_by": string,"customer_id": string | null,"description": string,"due_date": string | null,"expense_category_id": string | null,"id": string,"kind": Database["public"]['Enums']["transaction_kind"],"notes": string | null,"payment_method_id": string | null,"revenue_category_id": string | null,"service_id": string | null,"settled_date": string | null,"status": Database["public"]['Enums']["transaction_status"],"supplier": string | null,"to_account_id": string | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "account_id"?: string | null,"amount": number,"campaign_id"?: string | null,"competence_date"?: string,"created_at"?: string,"created_by"?: string | null,"customer_id"?: string | null,"description": string,"due_date"?: string | null,"expense_category_id"?: string | null,"id"?: string,"kind": Database["public"]['Enums']["transaction_kind"],"notes"?: string | null,"payment_method_id"?: string | null,"revenue_category_id"?: string | null,"service_id"?: string | null,"settled_date"?: string | null,"status"?: Database["public"]['Enums']["transaction_status"],"supplier"?: string | null,"to_account_id"?: string | null,"updated_at"?: string
+                    "account_id"?: string | null,"amount": number,"campaign_id"?: string | null,"competence_date"?: string,"created_at"?: string,"created_by"?: string,"customer_id"?: string | null,"description": string,"due_date"?: string | null,"expense_category_id"?: string | null,"id"?: string,"kind": Database["public"]['Enums']["transaction_kind"],"notes"?: string | null,"payment_method_id"?: string | null,"revenue_category_id"?: string | null,"service_id"?: string | null,"settled_date"?: string | null,"status"?: Database["public"]['Enums']["transaction_status"],"supplier"?: string | null,"to_account_id"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "account_id"?: string | null,"amount"?: number,"campaign_id"?: string | null,"competence_date"?: string,"created_at"?: string,"created_by"?: string | null,"customer_id"?: string | null,"description"?: string,"due_date"?: string | null,"expense_category_id"?: string | null,"id"?: string,"kind"?: Database["public"]['Enums']["transaction_kind"],"notes"?: string | null,"payment_method_id"?: string | null,"revenue_category_id"?: string | null,"service_id"?: string | null,"settled_date"?: string | null,"status"?: Database["public"]['Enums']["transaction_status"],"supplier"?: string | null,"to_account_id"?: string | null,"updated_at"?: string
+                    "account_id"?: string | null,"amount"?: number,"campaign_id"?: string | null,"competence_date"?: string,"created_at"?: string,"created_by"?: string,"customer_id"?: string | null,"description"?: string,"due_date"?: string | null,"expense_category_id"?: string | null,"id"?: string,"kind"?: Database["public"]['Enums']["transaction_kind"],"notes"?: string | null,"payment_method_id"?: string | null,"revenue_category_id"?: string | null,"service_id"?: string | null,"settled_date"?: string | null,"status"?: Database["public"]['Enums']["transaction_status"],"supplier"?: string | null,"to_account_id"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -593,24 +573,15 @@ isOneToOne: false
                 }
           }
           Functions: {
-            "can_access_attachment_entity":
-{ Args: { "p_entity_type": string }; Returns: boolean
-                           },
-"convert_budget_to_service":
+            "convert_budget_to_service":
 { Args: { "p_budget_id": string }; Returns: string
                            },
-"current_app_role":
-{ Args: Record<PropertyKey, never>; Returns: Database["public"]['Enums']["app_role"]
-                           },
-"has_role":
-{ Args: { "roles": (Database["public"]['Enums']["app_role"])[] }; Returns: boolean
-                           },
-"is_active_user":
-{ Args: Record<PropertyKey, never>; Returns: boolean
+"current_actor":
+{ Args: Record<PropertyKey, never>; Returns: string
                            }
           }
           Enums: {
-            "account_type": "banco"|"caixa"|"carteira_digital"|"outro","ad_platform": "instagram_ads"|"facebook_ads"|"google_ads"|"outras","app_role": "admin"|"financeiro"|"operacional","attribution_type": "declarada"|"rastreada"|"desconhecida","budget_status": "aguardando"|"aprovado"|"recusado"|"expirado","campaign_status": "planejada"|"ativa"|"pausada"|"encerrada","customer_status": "novo_contato"|"em_atendimento"|"cliente"|"inativo","expense_class": "custo_direto"|"despesa_operacional"|"investimento"|"imposto","fund_movement_kind": "deposito"|"retirada","line_item_kind": "material"|"mao_de_obra"|"outro","service_status": "solicitado"|"agendado"|"em_andamento"|"aguardando_material"|"concluido"|"cancelado","transaction_kind": "receita"|"despesa"|"transferencia","transaction_status": "pendente"|"efetivado"|"cancelado"
+            "account_type": "banco"|"caixa"|"carteira_digital"|"outro","ad_platform": "instagram_ads"|"facebook_ads"|"google_ads"|"outras","attribution_type": "declarada"|"rastreada"|"desconhecida","budget_status": "aguardando"|"aprovado"|"recusado"|"expirado","campaign_status": "planejada"|"ativa"|"pausada"|"encerrada","customer_status": "novo_contato"|"em_atendimento"|"cliente"|"inativo","expense_class": "custo_direto"|"despesa_operacional"|"investimento"|"imposto","fund_movement_kind": "deposito"|"retirada","line_item_kind": "material"|"mao_de_obra"|"outro","service_status": "solicitado"|"agendado"|"em_andamento"|"aguardando_material"|"concluido"|"cancelado","transaction_kind": "receita"|"despesa"|"transferencia","transaction_status": "pendente"|"efetivado"|"cancelado"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -730,7 +701,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "account_type": ["banco", "caixa", "carteira_digital", "outro"],"ad_platform": ["instagram_ads", "facebook_ads", "google_ads", "outras"],"app_role": ["admin", "financeiro", "operacional"],"attribution_type": ["declarada", "rastreada", "desconhecida"],"budget_status": ["aguardando", "aprovado", "recusado", "expirado"],"campaign_status": ["planejada", "ativa", "pausada", "encerrada"],"customer_status": ["novo_contato", "em_atendimento", "cliente", "inativo"],"expense_class": ["custo_direto", "despesa_operacional", "investimento", "imposto"],"fund_movement_kind": ["deposito", "retirada"],"line_item_kind": ["material", "mao_de_obra", "outro"],"service_status": ["solicitado", "agendado", "em_andamento", "aguardando_material", "concluido", "cancelado"],"transaction_kind": ["receita", "despesa", "transferencia"],"transaction_status": ["pendente", "efetivado", "cancelado"]
+            "account_type": ["banco", "caixa", "carteira_digital", "outro"],"ad_platform": ["instagram_ads", "facebook_ads", "google_ads", "outras"],"attribution_type": ["declarada", "rastreada", "desconhecida"],"budget_status": ["aguardando", "aprovado", "recusado", "expirado"],"campaign_status": ["planejada", "ativa", "pausada", "encerrada"],"customer_status": ["novo_contato", "em_atendimento", "cliente", "inativo"],"expense_class": ["custo_direto", "despesa_operacional", "investimento", "imposto"],"fund_movement_kind": ["deposito", "retirada"],"line_item_kind": ["material", "mao_de_obra", "outro"],"service_status": ["solicitado", "agendado", "em_andamento", "aguardando_material", "concluido", "cancelado"],"transaction_kind": ["receita", "despesa", "transferencia"],"transaction_status": ["pendente", "efetivado", "cancelado"]
           }
         }
 } as const

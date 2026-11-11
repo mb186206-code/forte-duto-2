@@ -8,18 +8,26 @@ Funciona no navegador do computador e do celular.
 
 ## Situação atual
 
-**Fase 1 concluída** — base do sistema: login, recuperação de senha, perfil, menu lateral com os 9
-módulos, busca global, ações rápidas, tema claro/escuro, identidade visual e o **banco de dados
-completo** (todas as tabelas, regras financeiras, permissões por função e histórico de alterações).
+**Fase 1 concluída** — base do sistema, pensada para o celular: entrada sem login (nome + código da
+empresa, uma vez por celular), barra de baixo com o botão **+**, menu com os 9 módulos, busca,
+tema claro/escuro, identidade visual e o **banco de dados completo** (todas as tabelas, regras
+financeiras e histórico de alterações com o nome de quem fez).
 
-Os módulos das próximas fases aparecem no menu com a etiqueta da fase e uma tela que explica o que
-virá. Nenhum botão finge funcionar e nenhum dado é fictício. Plano completo em
-[IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
+Os módulos das próximas fases aparecem com a etiqueta "Em breve". Nenhum botão finge funcionar e
+nenhum dado é fictício. Plano completo em [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
 
 ## Tecnologias
 
 Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · componentes no padrão shadcn/ui
-(Radix) · Lucide · Recharts · Motion · Supabase (PostgreSQL, Auth, Storage) · Vercel.
+(Radix) · Lucide · Recharts · Motion · Supabase (PostgreSQL, Storage) · Vercel.
+
+## Como funciona o acesso (sem login)
+
+- Na primeira vez, cada pessoa digita **o nome** e o **código da empresa** (`APP_ACCESS_CODE`).
+  O celular fica liberado por 400 dias (cookie assinado, que o JavaScript da página não lê).
+- O nome aparece no histórico de alterações e no campo "criado por" de cada registro.
+- Só o servidor fala com o banco, usando a chave secreta. A chave pública do Supabase não lê nada.
+- Para tirar o acesso de todo mundo, troque o código (ou o `APP_SESSION_SECRET`) na Vercel.
 
 ## Colocar no ar (produção)
 
@@ -28,33 +36,11 @@ Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · component
 2. **Criar o banco**: no painel do Supabase, *SQL Editor*, rode os arquivos de
    `supabase/migrations/` **na ordem** (001 → 004). Ou, com a CLI:
    `npx supabase link --project-ref SEU_REF && npx supabase db push`.
-3. **Autenticação** (*Authentication* no painel):
-   - *Sign In / Providers → Email*: desligue **"Allow new users to sign up"** (só o administrador cria usuários).
-   - *URL Configuration*: `Site URL` = endereço do sistema (ex.: `https://gestao.forteduto.com.br`);
-     em *Redirect URLs* adicione `https://SEU-ENDERECO/**`.
-   - *Emails → Templates*: em **Reset password** e **Invite user** cole o conteúdo de
-     `supabase/templates/recuperar-senha.html` e `supabase/templates/convite.html`
-     (links em português, que funcionam em qualquer aparelho).
-   - Para enviar e-mails de verdade em produção, configure um SMTP próprio (*Emails → SMTP Settings*);
-     o servidor de e-mail padrão do Supabase tem limite baixo de envios por hora.
-4. **Primeiro usuário = administrador**: *Authentication → Users → Add user → Create new user*
-   (marque *Auto Confirm User*). O primeiro usuário criado vira **Administrador** automaticamente;
-   os seguintes entram como **Operacional** até o administrador mudar a função.
-5. **Publicar na Vercel**: importe o repositório, defina **Root Directory = `sistema`** e cadastre as
-   variáveis de `.env.example` (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`,
-   `NEXT_PUBLIC_SITE_URL`).
+3. **Publicar na Vercel**: projeto com **Root Directory = `sistema`** e as variáveis de
+   `.env.example` (`SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `APP_ACCESS_CODE`, `APP_SESSION_SECRET`).
 
-Se o sistema for publicado sem as variáveis, ele mostra a tela "O banco de dados ainda não foi
-conectado" em vez de quebrar.
-
-### Mudar a função de um usuário (até a Fase 5)
-
-No *SQL Editor* do Supabase:
-
-```sql
-update public.profiles set role = 'financeiro' where email = 'pessoa@exemplo.com';
--- funções: 'admin' | 'financeiro' | 'operacional'
-```
+Se o sistema for publicado sem as variáveis do banco, ele mostra a tela "O banco de dados ainda não
+foi conectado" em vez de quebrar.
 
 ## Desenvolvimento local
 
@@ -63,25 +49,23 @@ Requisitos: Node 20.9+, Docker (para o Supabase local).
 ```bash
 cd sistema
 npm install
-npm run db:start            # sobe Supabase local (Postgres, Auth, Storage, Mailpit)
+npm run db:start            # sobe Supabase local (Postgres, Storage)
 npm run db:reset            # aplica as migrações do zero
-cp .env.example .env.local  # preencha com os valores de `npx supabase status`
+cp .env.example .env.local  # SUPABASE_URL e SUPABASE_SECRET_KEY de `npx supabase status`
 npm run dev                 # http://localhost:3000
 ```
-
-E-mails locais (recuperação de senha) aparecem no Mailpit: <http://127.0.0.1:54324>.
 
 ## Testes
 
 | Comando | O que testa |
 |---|---|
-| `npm run check` | TypeScript + ESLint + testes unitários (dinheiro em centavos, validações, redirecionamento seguro) |
-| `npm run test:db` | 29 testes de integração no Supabase **local**: RLS por função, saldos, transferências, fundos, orçamento→serviço, auditoria. Requer `.env.test` (veja `.env.test.example`) e banco recém-resetado |
-| `node scripts/e2e-fase1.mjs [pasta]` | 24 verificações no navegador (Playwright): login, erros, menu, busca, perfil, senha, tema, recuperação por e-mail, celular, permissões. Requer app rodando, banco resetado e os usuários `admin@teste.local` e `op@teste.local` (senha `Teste1234`) criados nessa ordem |
+| `npm run check` | TypeScript + ESLint + testes unitários (dinheiro em centavos, validações, passe do celular) |
+| `npm run test:db` | 22 testes no Supabase **local**: chave pública sem acesso, saldos, transferências, fundos, orçamento→serviço, histórico com o nome de quem fez. Requer `.env.test` (veja `.env.test.example`) e banco recém-resetado |
+| `node scripts/e2e-fase1.mjs [pasta]` | 14 verificações no navegador (Playwright), no celular e no computador: entrada, código errado, barra de baixo, botão +, menu, busca, nome, tema, sair, passe falsificado. Requer app rodando com `APP_ACCESS_CODE=246810` |
 
 ## Documentação
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) — organização do código e decisões técnicas
-- [DATABASE.md](DATABASE.md) — modelo de dados, regras financeiras e permissões
+- [DATABASE.md](DATABASE.md) — modelo de dados, regras financeiras e acesso
 - [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) — cores, tipografia e componentes
 - [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) — fases e status
