@@ -8,13 +8,14 @@ Funciona no navegador do computador e do celular.
 
 ## Situação atual
 
-**Fase 1 concluída** — base do sistema, pensada para o celular: entrada sem login (nome + código da
-empresa, uma vez por celular), barra de baixo com o botão **+**, menu com os 9 módulos, busca,
-tema claro/escuro, identidade visual e o **banco de dados completo** (todas as tabelas, regras
-financeiras e histórico de alterações com o nome de quem fez).
+**Todas as áreas estão prontas e testadas**, pensadas para o celular: Início, Dinheiro (contas,
+entradas, despesas, contas a pagar, transferências), Fundos, Clientes, Serviços (agenda, custos,
+pagamentos, fotos antes/depois), Orçamentos (itens, validade, aprovação e conversão em serviço),
+Marketing e anúncios (campanhas, números, link com UTM, origem do cliente, custo por cliente e ROI),
+Relatórios (impressão/PDF e planilhas) e Configurações (dados da empresa, metas, listas, cópia dos
+dados e histórico de quem mudou o quê). Entrada com nome e senha (`APP_USERS`).
 
-Os módulos das próximas fases aparecem com a etiqueta "Em breve". Nenhum botão finge funcionar e
-nenhum dado é fictício. Plano completo em [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
+Nenhum botão finge funcionar e nenhum dado é fictício. Plano completo em [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
 
 ## Tecnologias
 
@@ -62,6 +63,7 @@ npm run dev                 # http://localhost:3000
 | `npm run check` | TypeScript + ESLint + testes unitários (dinheiro em centavos, validações, passe do celular) |
 | `npm run test:db` | 22 testes no Supabase **local**: chave pública sem acesso, saldos, transferências, fundos, orçamento→serviço, histórico com o nome de quem fez. Requer `.env.test` (veja `.env.test.example`) e banco recém-resetado |
 | `node scripts/e2e-fase1.mjs [pasta]` | 14 verificações no navegador (Playwright), no celular e no computador: entrada, senha errada, barra de baixo, botão +, menu, busca, nome, tema, sair, passe falsificado. Requer app rodando com `APP_USERS=pedro:1234,daniel:1234,antony:1234` |
+| `node scripts/e2e-fase2.mjs` … `e2e-fase5.mjs` | 21 + 26 + 21 + 22 verificações no navegador (celular): Dinheiro e Fundos; Clientes, Serviços e Orçamentos (inclui envio de foto); Marketing; Relatórios e Configurações. Banco recém-resetado (aguarde ~15 s) e app em produção local (`npx next build && npx next start`) |
 
 ## Documentação
 

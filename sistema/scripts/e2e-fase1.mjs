@@ -101,7 +101,7 @@ await step("menu abre com as 9 áreas", async () => {
   await shot(m, "05-menu");
   await nav.getByRole("link", { name: /Clientes/ }).click();
   await m.waitForURL(`${BASE}/clientes`);
-  await m.getByRole("main").getByText("Em breve").waitFor();
+  await m.getByRole("main").getByRole("heading", { level: 1, name: "Clientes" }).waitFor();
 });
 
 await step("busca encontra e abre uma tela", async () => {
