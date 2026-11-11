@@ -1,11 +1,20 @@
 import type { Metadata } from "next";
-import { ModuleComingSoon } from "@/components/shared/module-coming-soon";
-import { NAV_ITEMS } from "@/components/layout/navigation";
+import { PageHeader } from "@/components/shared/page-header";
+import { todayISO } from "@/lib/dates";
+import { getFundMovements, getFunds, getPosition } from "@/features/financeiro/queries";
+import { PositionCards } from "@/features/financeiro/components/position-cards";
+import { FundosView } from "@/features/fundos/components/fundos-view";
 
-const item = NAV_ITEMS.find((i) => i.key === "fundos")!;
+export const metadata: Metadata = { title: "Fundos da empresa" };
+export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = { title: item.label };
-
-export default function Page() {
-  return <ModuleComingSoon item={item} />;
+export default async function FundosPage() {
+  const [funds, movements, position] = await Promise.all([getFunds(), getFundMovements(), getPosition()]);
+  return (
+    <div className="mx-auto grid w-full max-w-3xl gap-5">
+      <PageHeader title="Fundos da empresa" description="Separe dinheiro para planos e emergências. O dinheiro guardado sai do “livre para usar”, mas continua nas suas contas." />
+      <PositionCards position={position} />
+      <FundosView funds={funds} movements={movements} today={todayISO()} />
+    </div>
+  );
 }
