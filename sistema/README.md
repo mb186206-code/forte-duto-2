@@ -21,13 +21,13 @@ nenhum dado é fictício. Plano completo em [IMPLEMENTATION_PLAN.md](IMPLEMENTAT
 Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · componentes no padrão shadcn/ui
 (Radix) · Lucide · Recharts · Motion · Supabase (PostgreSQL, Storage) · Vercel.
 
-## Como funciona o acesso (sem login)
+## Como funciona o acesso
 
-- Na primeira vez, cada pessoa digita **o nome** e o **código da empresa** (`APP_ACCESS_CODE`).
-  O celular fica liberado por 400 dias (cookie assinado, que o JavaScript da página não lê).
+- Cada pessoa tem nome e senha, definidos em `APP_USERS` (`pedro:1234,daniel:1234,...`). Digita uma vez
+  por celular; o aparelho fica liberado por 400 dias (cookie assinado, que o JavaScript da página não lê).
 - O nome aparece no histórico de alterações e no campo "criado por" de cada registro.
 - Só o servidor fala com o banco, usando a chave secreta. A chave pública do Supabase não lê nada.
-- Para tirar o acesso de todo mundo, troque o código (ou o `APP_SESSION_SECRET`) na Vercel.
+- Para tirar o acesso de alguém, troque a senha dela em `APP_USERS` (ou o `APP_SESSION_SECRET`, que desconecta todos).
 
 ## Colocar no ar (produção)
 
@@ -37,7 +37,7 @@ Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · component
    `supabase/migrations/` **na ordem** (001 → 004). Ou, com a CLI:
    `npx supabase link --project-ref SEU_REF && npx supabase db push`.
 3. **Publicar na Vercel**: projeto com **Root Directory = `sistema`** e as variáveis de
-   `.env.example` (`SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `APP_ACCESS_CODE`, `APP_SESSION_SECRET`).
+   `.env.example` (`SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `APP_USERS`, `APP_SESSION_SECRET`).
 
 Se o sistema for publicado sem as variáveis do banco, ele mostra a tela "O banco de dados ainda não
 foi conectado" em vez de quebrar.
@@ -61,7 +61,7 @@ npm run dev                 # http://localhost:3000
 |---|---|
 | `npm run check` | TypeScript + ESLint + testes unitários (dinheiro em centavos, validações, passe do celular) |
 | `npm run test:db` | 22 testes no Supabase **local**: chave pública sem acesso, saldos, transferências, fundos, orçamento→serviço, histórico com o nome de quem fez. Requer `.env.test` (veja `.env.test.example`) e banco recém-resetado |
-| `node scripts/e2e-fase1.mjs [pasta]` | 14 verificações no navegador (Playwright), no celular e no computador: entrada, código errado, barra de baixo, botão +, menu, busca, nome, tema, sair, passe falsificado. Requer app rodando com `APP_ACCESS_CODE=246810` |
+| `node scripts/e2e-fase1.mjs [pasta]` | 14 verificações no navegador (Playwright), no celular e no computador: entrada, senha errada, barra de baixo, botão +, menu, busca, nome, tema, sair, passe falsificado. Requer app rodando com `APP_USERS=pedro:1234,daniel:1234,antony:1234` |
 
 ## Documentação
 

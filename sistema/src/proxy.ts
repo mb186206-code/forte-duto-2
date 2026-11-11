@@ -1,13 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { ACCESS_COOKIE, NAME_COOKIE, verifyAccess } from "@/lib/access/token";
-import { getAccessConfig } from "@/lib/access/config";
+import { findUser, getAccessConfig, userKey } from "@/lib/access/config";
 
 const ENTRY_PATH = "/entrar";
 const SETUP_PATH = "/configuracao-pendente";
 
 /**
- * Sem login: o celular só precisa (1) ter digitado o código da empresa, se ele
- * existir, e (2) informar o nome de quem usa. Os dois ficam guardados no celular.
+ * O celular precisa (1) ter entrado com nome e senha (passe assinado no cookie,
+ * preso a esse usuário) e (2) ter o nome de quem usa. Fica guardado por mais de um ano.
  */
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -20,8 +20,18 @@ export async function proxy(request: NextRequest) {
   if (!dbConfigured) return NextResponse.redirect(new URL(SETUP_PATH, request.url));
 
   const access = getAccessConfig();
-  const hasPass = access ? await verifyAccess(request.cookies.get(ACCESS_COOKIE)?.value, access.secret, access.code) : true;
-  const hasName = Boolean(request.cookies.get(NAME_COOKIE)?.value);
+  const rawName = request.cookies.get(NAME_COOKIE)?.value;
+  let name = "";
+  try {
+    name = rawName ? decodeURIComponent(rawName) : "";
+  } catch {
+    name = "";
+  }
+  const user = access ? findUser(access.users, name) : undefined;
+  const hasPass = access
+    ? Boolean(user) && (await verifyAccess(request.cookies.get(ACCESS_COOKIE)?.value, access.secret, userKey(user!)))
+    : true;
+  const hasName = Boolean(name);
   const ready = hasPass && hasName;
 
   if (!ready && pathname !== ENTRY_PATH) {

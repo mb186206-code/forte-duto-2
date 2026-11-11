@@ -26,7 +26,7 @@ export default function EntryPage() {
             priority
           />
           <h1 className="mt-5 font-display text-3xl font-bold">Bem-vindo!</h1>
-          <p className="mt-1 text-white/75">{askCode ? "Digite seu nome e o código da empresa." : "Digite seu nome para começar."}</p>
+          <p className="mt-1 text-white/75">{askCode ? "Digite seu nome e sua senha." : "Digite seu nome para começar."}</p>
         </div>
       </div>
       <div className="relative z-10 mx-auto -mt-8 w-full max-w-sm px-4 pb-10">
