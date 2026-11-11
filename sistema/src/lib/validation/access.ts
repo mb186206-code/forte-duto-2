@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const entrySchema = z.object({
   name: z.string().trim().min(2, "Digite seu nome.").max(60, "Nome muito longo."),
-  code: z.string().trim().max(40).optional(),
+  password: z.string().max(80).optional(),
 });
 
 /** Primeira mensagem de erro de cada campo, pronta para o formulário. */

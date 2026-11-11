@@ -17,25 +17,26 @@ export function EntryForm({ askCode }: { askCode: boolean }) {
         <Input
           id="name"
           name="name"
-          autoComplete="given-name"
+          autoComplete="username"
           autoFocus
           required
           placeholder="Ex.: Daniel"
+          autoCapitalize="words"
           className="h-12 text-lg"
           aria-invalid={!!fe.name || undefined}
         />
       </Field>
       {askCode && (
-        <Field id="code" label="Código da empresa" hint="Só precisa digitar uma vez neste celular." error={fe.code}>
+        <Field id="password" label="Sua senha" hint="Só precisa digitar uma vez neste celular." error={fe.password}>
           <Input
-            id="code"
-            name="code"
-            inputMode="numeric"
-            autoComplete="one-time-code"
+            id="password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
             required
-            placeholder="••••••"
-            className="h-12 text-center text-2xl tracking-[0.5em]"
-            aria-invalid={!!fe.code || undefined}
+            placeholder="••••"
+            className="h-12 text-lg"
+            aria-invalid={!!fe.password || undefined}
           />
         </Field>
       )}

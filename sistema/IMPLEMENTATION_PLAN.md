@@ -10,7 +10,7 @@ Desenvolvimento por fases; cada fase só termina depois de testada.
 - [x] Identidade visual e tema claro/escuro (ver DESIGN_SYSTEM.md)
 - [x] Layout: menu lateral com 9 módulos, gaveta no celular, topo com busca global (Ctrl+K), ações rápidas, menu da conta
 - [x] Supabase: acesso só pelo servidor, tela de configuração pendente
-- [x] Entrada sem login (pedido do Daniel): nome + código da empresa uma vez por celular, passe assinado de 400 dias, "sair deste celular"
+- [x] Entrada simples (pedido do Daniel): nome + senha uma vez por celular, passe assinado de 400 dias, "sair deste celular"
 - [x] Configurações: trocar nome, tema claro/escuro
 - [x] Banco completo: tabelas, views de saldo, acesso só pelo servidor, histórico com o nome de quem fez, Storage (ver DATABASE.md)
 - [x] Testes: 36 unitários, 22 de banco, 14 de navegador (celular + computador)

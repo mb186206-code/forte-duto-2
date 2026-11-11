@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { PageHeader } from "@/components/shared/page-header";
 import { getCurrentUserName } from "@/lib/access/session";
 import { getAccessConfig } from "@/lib/access/config";
-import { NameForm } from "./name-form";
 import { ThemeChoice } from "./theme-choice";
 import { LeaveButton } from "./leave-button";
 
@@ -21,7 +20,7 @@ function SectionTitle({ icon: Icon, children }: { icon: typeof UserRound; childr
 
 export default async function SettingsPage() {
   const name = (await getCurrentUserName()) ?? "";
-  const hasCode = getAccessConfig() !== null;
+  const hasLogin = getAccessConfig() !== null;
 
   return (
     <div className="mx-auto grid w-full max-w-2xl grid-cols-1 gap-5">
@@ -32,7 +31,7 @@ export default async function SettingsPage() {
           <SectionTitle icon={UserRound}>Quem está usando</SectionTitle>
         </CardHeader>
         <CardContent>
-          <NameForm name={name} />
+          <p className="text-lg font-semibold">{name}</p>
         </CardContent>
       </Card>
 
@@ -46,7 +45,7 @@ export default async function SettingsPage() {
         </CardContent>
       </Card>
 
-      {hasCode && (
+      {hasLogin && (
         <Card>
           <CardHeader>
             <SectionTitle icon={Smartphone}>Este celular</SectionTitle>

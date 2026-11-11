@@ -1,6 +1,6 @@
 // Teste de ponta a ponta da Fase 1 (navegador real, Supabase local).
 // Pré-requisitos: `npm run db:start`, `npm run db:reset` e o app rodando em
-// http://localhost:3000 com APP_ACCESS_CODE=246810 (para testar o código da empresa).
+// http://localhost:3000 com APP_USERS=pedro:1234,daniel:1234,antony:1234.
 //
 // Uso: node scripts/e2e-fase1.mjs [pasta-para-screenshots]
 import { createRequire } from "node:module";
@@ -11,7 +11,7 @@ import { mkdirSync } from "node:fs";
 const { chromium } = createRequire(import.meta.url)("playwright");
 
 const BASE = process.env.E2E_BASE_URL ?? "http://localhost:3000";
-const CODE = process.env.E2E_ACCESS_CODE ?? "246810";
+const PASS = process.env.E2E_PASSWORD ?? "1234";
 const SHOTS = process.argv[2];
 if (SHOTS) mkdirSync(SHOTS, { recursive: true });
 
@@ -44,19 +44,19 @@ await step("sem passe, qualquer página leva para a entrada", async () => {
   await shot(m, "01-entrada-celular");
 });
 
-await step("nome vazio e código errado mostram mensagem clara, sem apagar o nome", async () => {
+await step("nome vazio e senha errada mostram mensagem clara, sem apagar o nome", async () => {
   await m.getByRole("button", { name: "Entrar" }).click();
   await m.getByText("Digite seu nome.").waitFor();
   await m.getByLabel("Seu nome").fill("Daniel");
-  await m.getByLabel("Código da empresa").fill("111111");
+  await m.getByLabel("Sua senha").fill("9999");
   await m.getByRole("button", { name: "Entrar" }).click();
-  await m.getByText("Código errado").waitFor();
+  await m.getByText("Nome ou senha errados.").waitFor();
   assert.equal(await m.getByLabel("Seu nome").inputValue(), "Daniel");
-  await shot(m, "02-codigo-errado");
+  await shot(m, "02-senha-errada");
 });
 
-await step("código certo libera o celular e abre o início", async () => {
-  await m.getByLabel("Código da empresa").fill(CODE);
+await step("senha certa libera o celular e abre o início", async () => {
+  await m.getByLabel("Sua senha").fill(PASS);
   await m.getByRole("button", { name: "Entrar" }).click();
   await m.waitForURL(`${BASE}/dashboard`);
   await m.getByRole("heading", { level: 1, name: /Daniel!/ }).waitFor();
@@ -111,13 +111,9 @@ await step("busca encontra e abre uma tela", async () => {
   await m.waitForURL(`${BASE}/fundos`);
 });
 
-await step("trocar o nome", async () => {
+await step("configurações mostram quem está usando", async () => {
   await m.goto(`${BASE}/configuracoes`);
-  await m.getByLabel("Seu nome").fill("Daniel Forte");
-  await m.getByRole("button", { name: "Salvar" }).click();
-  await m.getByText("Nome salvo.").waitFor();
-  await m.reload();
-  assert.equal(await m.getByLabel("Seu nome").inputValue(), "Daniel Forte");
+  await m.getByRole("main").getByText("Daniel", { exact: true }).waitFor();
   await shot(m, "06-configuracoes");
 });
 
@@ -141,7 +137,7 @@ await step("sair deste celular pede confirmação e tira o acesso", async () => 
 await step("passe falsificado é recusado", async () => {
   await ctx.addCookies([
     { name: "fd_acesso", value: `${Date.now()}.assinatura-falsa`, url: BASE },
-    { name: "fd_nome", value: "Invasor", url: BASE },
+    { name: "fd_nome", value: "Daniel", url: BASE },
   ]);
   await m.goto(`${BASE}/dashboard`);
   await m.waitForURL(`${BASE}/entrar`);
@@ -157,8 +153,8 @@ console.log("\nComputador");
 const d = await (await browser.newContext({ viewport: { width: 1440, height: 900 } })).newPage();
 await step("entrada, menu lateral e ações rápidas no computador", async () => {
   await d.goto(`${BASE}/entrar`);
-  await d.getByLabel("Seu nome").fill("Carlos");
-  await d.getByLabel("Código da empresa").fill(CODE);
+  await d.getByLabel("Seu nome").fill("Antony");
+  await d.getByLabel("Sua senha").fill(PASS);
   await d.getByRole("button", { name: "Entrar" }).click();
   await d.waitForURL(`${BASE}/dashboard`);
   const nav = d.getByRole("navigation", { name: "Menu principal" });

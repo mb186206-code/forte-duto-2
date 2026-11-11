@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { getAccessConfig } from "@/lib/access/config";
+import { findUser, getAccessConfig, userKey } from "@/lib/access/config";
 import { ACCESS_COOKIE, ACCESS_MAX_AGE, NAME_COOKIE, codesMatch, signAccess } from "@/lib/access/token";
 import { entrySchema, fieldErrors } from "@/lib/validation/access";
 import type { FormState } from "@/lib/form-state";
@@ -16,40 +16,34 @@ const cookieOptions = {
   maxAge: ACCESS_MAX_AGE,
 };
 
-/** Libera este celular: guarda o nome e, se houver, o passe do código da empresa. */
+/** Entra com nome e senha. Este celular fica liberado por mais de um ano. */
 export async function enter(_prev: FormState, formData: FormData): Promise<FormState> {
   const parsed = entrySchema.safeParse({
     name: formData.get("name"),
-    code: formData.get("code") ?? undefined,
+    password: formData.get("password") ?? undefined,
   });
   if (!parsed.success) return { status: "error", fieldErrors: fieldErrors(parsed.error) };
 
   const access = getAccessConfig();
   const store = await cookies();
+  let displayName = parsed.data.name;
 
   if (access) {
-    const typed = parsed.data.code ?? "";
-    if (!typed) return { status: "error", fieldErrors: { code: "Digite o código da empresa." } };
-    if (!codesMatch(typed, access.code)) {
+    const typed = parsed.data.password ?? "";
+    if (!typed) return { status: "error", fieldErrors: { password: "Digite sua senha." } };
+    const user = findUser(access.users, parsed.data.name);
+    if (!user || !codesMatch(typed, user.password)) {
       // pausa curta para dificultar tentativas em sequência
       await new Promise((r) => setTimeout(r, 800));
-      return { status: "error", fieldErrors: { code: "Código errado. Confira com o Daniel." } };
+      return { status: "error", fieldErrors: { password: "Nome ou senha errados." } };
     }
-    store.set(ACCESS_COOKIE, await signAccess(access.secret, access.code), cookieOptions);
+    displayName = user.name;
+    store.set(ACCESS_COOKIE, await signAccess(access.secret, userKey(user)), cookieOptions);
   }
 
-  store.set(NAME_COOKIE, encodeURIComponent(parsed.data.name), cookieOptions);
+  store.set(NAME_COOKIE, encodeURIComponent(displayName), cookieOptions);
   revalidatePath("/", "layout");
   redirect("/dashboard");
-}
-
-/** Muda o nome de quem usa este celular. */
-export async function changeName(_prev: FormState, formData: FormData): Promise<FormState> {
-  const parsed = entrySchema.pick({ name: true }).safeParse({ name: formData.get("name") });
-  if (!parsed.success) return { status: "error", fieldErrors: fieldErrors(parsed.error) };
-  (await cookies()).set(NAME_COOKIE, encodeURIComponent(parsed.data.name), cookieOptions);
-  revalidatePath("/", "layout");
-  return { status: "success", message: "Nome salvo." };
 }
 
 /** Tira o acesso deste celular (ex.: aparelho emprestado ou perdido). */

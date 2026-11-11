@@ -8,11 +8,11 @@ Celular ──► proxy.ts (sem passe ou sem nome → /entrar)
         ──► Supabase com a chave secreta (só no servidor) ──► PostgreSQL
 ```
 
-Não há login (pedido do Daniel: o sistema é só dele e da equipe). A proteção é:
+Login simples (pedido do Daniel: o sistema é só dele e da equipe, poucas pessoas). A proteção é:
 
-1. **Código da empresa** (`APP_ACCESS_CODE`): digitado uma vez por celular. Vira um cookie
-   `fd_acesso` httpOnly, assinado com HMAC (`APP_SESSION_SECRET`), válido por 400 dias. A assinatura
-   inclui o código, então trocar o código desconecta todos. Código errado tem espera de 0,8 s.
+1. **Nome e senha** (`APP_USERS`): digitados uma vez por celular. Vira um cookie
+   `fd_acesso` httpOnly, assinado com HMAC (`APP_SESSION_SECRET`), válido por 400 dias. O passe fica preso ao
+   usuário e à senha dele: trocar a senha desconecta os celulares dessa pessoa. Senha errada tem espera de 0,8 s.
 2. **Banco fechado**: o navegador nunca recebe chave do Supabase. RLS forçado sem políticas e
    privilégios revogados de `anon`/`authenticated`; só o servidor (service_role) acessa.
 3. **Nome de quem usa** (cookie `fd_nome`) vai no cabeçalho `x-app-user`; o banco grava esse nome
@@ -25,7 +25,7 @@ sistema/
 ├─ src/
 │  ├─ proxy.ts                    # (antigo middleware) confere passe e nome; senão → /entrar
 │  ├─ app/
-│  │  ├─ entrar/                  # boas-vindas: nome + código da empresa
+│  │  ├─ entrar/                  # boas-vindas: nome + senha
 │  │  ├─ (app)/                   # sistema: barra de baixo (celular), menu lateral (computador)
 │  │  └─ configuracao-pendente/   # tela quando faltam as variáveis do Supabase
 │  ├─ components/
@@ -53,7 +53,7 @@ Regra de dependência: `app` → `features` → `lib`. Componentes de `ui` não 
 | Decisão | Motivo |
 |---|---|
 | Next.js 16 **sem** Cache Components | Toda tela depende de dados atuais; renderização sob demanda é mais simples e segura. |
-| Sem login; código da empresa + nome | Pedido do Daniel: uso simples no celular, só ele e a equipe. |
+| Nome + senha simples (lista em `APP_USERS`) | Pedido do Daniel: uso simples no celular, só ele e a equipe. |
 | Banco acessado **só pelo servidor** | Sem usuários no Supabase, RLS por pessoa não faz sentido; fechar o banco para o navegador é mais seguro. |
 | Dinheiro em **centavos inteiros** no código, `numeric(14,2)` no banco | Evita erro de ponto flutuante (0,10 + 0,20 = 0,30 exato). Conversão só nas bordas (`toDbAmount`/`fromDbAmount`). |
 | Cálculos de saldo em **views SQL** (`account_balances`, `fund_balances`, `financial_position`) | Uma única fonte da verdade. |

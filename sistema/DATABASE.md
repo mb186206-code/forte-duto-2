@@ -105,6 +105,6 @@ O sistema é usado só pelo Daniel e pela equipe, sem login:
 
 - O navegador **nunca** fala com o banco. Só o servidor Next.js, com `SUPABASE_SECRET_KEY`.
 - Os papéis `anon` e `authenticated` do Supabase não têm privilégio em nenhuma tabela, view ou função; o bucket `anexos` é privado.
-- A entrada no sistema é protegida pelo **código da empresa** (`APP_ACCESS_CODE`), digitado uma vez por celular.
+- A entrada no sistema é protegida por **nome e senha** (`APP_USERS`), digitados uma vez por celular.
 
 Tudo isso tem teste automatizado em `scripts/test-db.mjs`.
