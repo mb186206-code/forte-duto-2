@@ -146,3 +146,8 @@ export function formatPercent(value: number | null): string {
   if (value === null) return "—";
   return `${value.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 1 })}%`;
 }
+
+/** Centavos → texto para preencher um campo de valor ("12345" → "123,45"). */
+export function toInputValue(cents: Cents): string {
+  return (cents / 100).toFixed(2).replace(".", ",");
+}

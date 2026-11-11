@@ -179,3 +179,21 @@
     }
   }
 }
+
+/* Impressão / "Salvar como PDF": só o conteúdo, sem menus nem botões. */
+@media print {
+  body > div > aside,
+  body > div > nav,
+  header,
+  nav,
+  [data-no-print],
+  [data-sonner-toaster] {
+    display: none !important;
+  }
+  .lg\:pl-72 {
+    padding-left: 0 !important;
+  }
+  main {
+    padding: 0 !important;
+  }
+}
