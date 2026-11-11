@@ -1,10 +1,18 @@
 import type { Metadata } from "next";
-import { Sparkles } from "lucide-react";
+import Link from "next/link";
+import { AlertTriangle, ArrowDownCircle, ArrowUpCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { QuickActionList } from "@/components/layout/quick-action-list";
+import { Money } from "@/components/shared/money";
 import { getCurrentUserName } from "@/lib/access/session";
+import { addDays, currentMonth, formatDateBR, monthLabel, todayISO } from "@/lib/dates";
+import { getMonthlySeries, getPosition, listMonthTransactions, listPending, listRecent, summarize } from "@/features/financeiro/queries";
+import { PositionCards } from "@/features/financeiro/components/position-cards";
+import { MonthlyChart } from "@/features/financeiro/components/monthly-chart";
 
 export const metadata: Metadata = { title: "Início" };
+export const dynamic = "force-dynamic";
 
 function greeting(): string {
   const hour = Number(
@@ -18,7 +26,20 @@ function greeting(): string {
 
 export default async function DashboardPage() {
   const firstName = ((await getCurrentUserName()) ?? "").split(" ")[0];
-  const today = new Intl.DateTimeFormat("pt-BR", {
+  const today = todayISO();
+  const month = currentMonth();
+  const [position, monthRows, pending, recent, series] = await Promise.all([
+    getPosition(),
+    listMonthTransactions(month),
+    listPending(),
+    listRecent(5),
+    getMonthlySeries(6, month),
+  ]);
+  const sum = summarize(monthRows);
+  const soon = addDays(today, 7);
+  const dueSoon = pending.filter((t) => (t.dueDate ?? t.competenceDate) <= soon).slice(0, 6);
+  const isLate = (d: string) => d < today;
+  const todayText = new Intl.DateTimeFormat("pt-BR", {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -28,7 +49,7 @@ export default async function DashboardPage() {
   return (
     <div className="mx-auto grid w-full max-w-3xl gap-6">
       <div>
-        <p className="text-sm font-medium text-muted-foreground first-letter:uppercase">{today}</p>
+        <p className="text-sm font-medium text-muted-foreground first-letter:uppercase">{todayText}</p>
         <h1 className="mt-0.5 text-[1.75rem] leading-tight font-bold tracking-tight">
           {greeting()}, {firstName}!
         </h1>
@@ -41,16 +62,74 @@ export default async function DashboardPage() {
         <QuickActionList />
       </section>
 
-      <Card className="flex items-start gap-4 p-5">
-        <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-highlight/25 text-brand-navy dark:text-brand-yellow">
-          <Sparkles className="size-5" aria-hidden />
-        </span>
-        <div>
-          <h2 className="font-semibold">Seu resumo do mês vai aparecer aqui</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Quanto entrou, quanto saiu e quanto sobrou, assim que os lançamentos de dinheiro forem liberados.
-          </p>
+      <PositionCards position={position} />
+
+      <Card className="grid grid-cols-3 divide-x p-0 text-center">
+        <div className="p-3">
+          <p className="text-xs font-medium text-muted-foreground">Entrou</p>
+          <Money cents={sum.in} tone="in" className="text-base font-bold" />
         </div>
+        <div className="p-3">
+          <p className="text-xs font-medium text-muted-foreground">Saiu</p>
+          <Money cents={sum.out} tone="out" className="text-base font-bold" />
+        </div>
+        <div className="p-3">
+          <p className="text-xs font-medium text-muted-foreground">Sobrou</p>
+          <Money cents={sum.result} tone="auto" className="text-base font-bold" />
+        </div>
+      </Card>
+      <p className="-mt-3 text-center text-xs text-muted-foreground">{monthLabel(month)}</p>
+
+      {dueSoon.length > 0 && (
+        <Card className="p-4">
+          <h2 className="flex items-center gap-2 font-semibold">
+            <AlertTriangle className="size-5 text-warning" aria-hidden /> Contas e recebimentos próximos
+          </h2>
+          <ul className="mt-2 divide-y">
+            {dueSoon.map((t) => {
+              const due = t.dueDate ?? t.competenceDate;
+              return (
+                <li key={t.id} className="flex items-center justify-between gap-3 py-2.5">
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-medium">{t.description}</span>
+                    <span className="block text-xs text-muted-foreground">
+                      {t.kind === "receita" ? "Receber" : "Pagar"} até {formatDateBR(due)} {isLate(due) && <Badge variant="danger">Atrasado</Badge>}
+                    </span>
+                  </span>
+                  <Money cents={t.amount} tone={t.kind === "receita" ? "in" : "out"} className="shrink-0 font-semibold" />
+                </li>
+              );
+            })}
+          </ul>
+          <Link href="/financeiro" className="mt-2 block text-sm font-medium text-info">
+            Ver tudo em Dinheiro
+          </Link>
+        </Card>
+      )}
+
+      <Card className="p-4">
+        <h2 className="font-semibold">Entrou × saiu (últimos 6 meses)</h2>
+        <MonthlyChart data={series} />
+      </Card>
+
+      <Card className="p-4">
+        <h2 className="font-semibold">Últimos lançamentos</h2>
+        {recent.length === 0 ? (
+          <p className="py-4 text-sm text-muted-foreground">Ainda não há lançamentos. Toque em “Recebi dinheiro” ou “Paguei uma conta” para começar.</p>
+        ) : (
+          <ul className="mt-2 divide-y">
+            {recent.map((t) => (
+              <li key={t.id} className="flex items-center gap-3 py-2.5">
+                {t.kind === "receita" ? <ArrowDownCircle className="size-5 shrink-0 text-success" aria-hidden /> : t.kind === "despesa" ? <ArrowUpCircle className="size-5 shrink-0 text-destructive" aria-hidden /> : <span className="size-5 shrink-0" />}
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-medium">{t.description}</span>
+                  <span className="block text-xs text-muted-foreground">{formatDateBR(t.date)}{t.status === "pendente" ? " · pendente" : ""}</span>
+                </span>
+                <Money cents={t.kind === "despesa" ? -t.amount : t.amount} tone={t.kind === "transferencia" ? "neutral" : "auto"} signed={t.kind !== "transferencia"} className="shrink-0 text-sm font-semibold" />
+              </li>
+            ))}
+          </ul>
+        )}
       </Card>
     </div>
   );
