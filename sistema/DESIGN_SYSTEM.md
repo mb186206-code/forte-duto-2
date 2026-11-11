@@ -50,3 +50,13 @@ Padrões compartilhados: `PageHeader`, `EmptyState` (estado vazio com orientaç�
 5. Lista vazia sempre com `EmptyState` explicando o próximo passo.
 6. Animações curtas (150–300 ms) e desligadas com `prefers-reduced-motion`.
 7. Ícones Lucide, 16–20 px, nunca sozinhos sem `aria-label`.
+
+## Celular em primeiro lugar (pedido do Daniel, 11/11/2026)
+
+O sistema vai ser usado principalmente no celular, por quem não tem familiaridade com informática.
+
+- **Barra de baixo** (`BottomNav`): mostra 3 abas com nomes simples (Início, Dinheiro, Serviços ou Clientes, conforme a função), um botão **"+" amarelo** grande no meio e o **Menu** com todas as áreas.
+- **"+" e Início** usam os mesmos botões grandes (`QuickActionList`), escritos em linguagem do dia a dia: "Recebi dinheiro", "Paguei uma conta", "Novo cliente", "Novo serviço" e "Novo orçamento".
+- **Topo do celular**: só a marca, a lupa de busca e a conta. O tema fica nas Configurações.
+- **Nada técnico para o usuário**: fases e status do banco ficam na documentação. O que ainda não foi liberado aparece como "Em breve".
+- Formulários com o mínimo de campos e botões grandes.

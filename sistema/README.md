@@ -77,7 +77,7 @@ E-mails locais (recuperação de senha) aparecem no Mailpit: <http://127.0.0.1:5
 |---|---|
 | `npm run check` | TypeScript + ESLint + testes unitários (dinheiro em centavos, validações, redirecionamento seguro) |
 | `npm run test:db` | 29 testes de integração no Supabase **local**: RLS por função, saldos, transferências, fundos, orçamento→serviço, auditoria. Requer `.env.test` (veja `.env.test.example`) e banco recém-resetado |
-| `node scripts/e2e-fase1.mjs [pasta]` | 23 verificações no navegador (Playwright): login, erros, menu, busca, perfil, senha, tema, recuperação por e-mail, celular, permissões. Requer app rodando, banco resetado e os usuários `admin@teste.local` e `op@teste.local` (senha `Teste1234`) criados nessa ordem |
+| `node scripts/e2e-fase1.mjs [pasta]` | 24 verificações no navegador (Playwright): login, erros, menu, busca, perfil, senha, tema, recuperação por e-mail, celular, permissões. Requer app rodando, banco resetado e os usuários `admin@teste.local` e `op@teste.local` (senha `Teste1234`) criados nessa ordem |
 
 ## Documentação
 

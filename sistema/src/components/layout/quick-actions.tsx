@@ -24,10 +24,9 @@ export function QuickActions({ role }: { role: Role }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="highlight" className="gap-1.5 px-3 sm:px-4">
+        <Button variant="highlight" className="hidden gap-1.5 px-4 lg:inline-flex">
           <Plus className="size-4" strokeWidth={2.5} />
-          <span className="hidden sm:inline">Novo</span>
-          <span className="sr-only sm:hidden">Ações rápidas</span>
+          Novo
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
@@ -46,7 +45,7 @@ export function QuickActions({ role }: { role: Role }) {
             <DropdownMenuItem key={action.key} disabled>
               <Icon />
               <span className="flex-1">{action.label}</span>
-              <span className="text-[0.65rem] font-semibold tracking-wide text-muted-foreground uppercase">Fase {action.phase}</span>
+              <span className="text-xs text-muted-foreground">Em breve</span>
             </DropdownMenuItem>
           );
         })}

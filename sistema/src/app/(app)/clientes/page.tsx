@@ -7,16 +7,7 @@ const item = NAV_ITEMS.find((i) => i.key === "clientes")!;
 
 export const metadata: Metadata = { title: item.label };
 
-const FEATURES = [
-  "Cadastro rápido, mesmo com dados incompletos",
-  "Busca por nome e telefone, com aviso de cliente duplicado",
-  "Origem do contato e campanha relacionada",
-  "Ficha do cliente: serviços, orçamentos, pagamentos e observações",
-  "Total de serviços contratados por cliente",
-  "Botão direto para chamar no WhatsApp",
-];
-
 export default async function Page() {
   await requireModule("clientes");
-  return <ModuleComingSoon item={item} features={FEATURES} />;
+  return <ModuleComingSoon item={item} />;
 }

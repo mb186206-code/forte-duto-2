@@ -51,7 +51,15 @@ export function CommandMenu({ role }: { role: Role }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex h-10 w-full max-w-md items-center gap-2 rounded-lg border border-input bg-card px-3 text-sm text-muted-foreground shadow-xs transition hover:border-ring/50 focus-visible:ring-[3px] focus-visible:ring-ring/30 focus-visible:outline-none"
+        aria-label="Buscar"
+        className="flex size-11 items-center justify-center rounded-full text-foreground transition hover:bg-accent lg:hidden"
+      >
+        <Search className="size-[1.35rem]" aria-hidden />
+      </button>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="hidden h-10 w-full max-w-md items-center gap-2 rounded-lg border border-input bg-card px-3 text-sm text-muted-foreground shadow-xs transition hover:border-ring/50 focus-visible:ring-[3px] focus-visible:ring-ring/30 focus-visible:outline-none lg:flex"
       >
         <Search className="size-4 shrink-0" aria-hidden />
         <span className="flex-1 truncate text-left">Buscar no sistema…</span>
@@ -73,7 +81,7 @@ export function CommandMenu({ role }: { role: Role }) {
                     <CommandItem key={item.key} value={`${item.label} ${item.keywords?.join(" ") ?? ""}`} onSelect={() => go(item.href)}>
                       <Icon />
                       <span className="flex-1">{item.label}</span>
-                      {!isAvailable(item.phase) && <span className="text-xs text-muted-foreground">Fase {item.phase}</span>}
+                      {!isAvailable(item.phase) && <span className="text-xs text-muted-foreground">Em breve</span>}
                     </CommandItem>
                   );
                 })}

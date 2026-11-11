@@ -7,16 +7,7 @@ const item = NAV_ITEMS.find((i) => i.key === "orcamentos")!;
 
 export const metadata: Metadata = { title: item.label };
 
-const FEATURES = [
-  "Número automático para cada orçamento",
-  "Itens de materiais e mão de obra com total calculado",
-  "Validade e situação: aguardando, aprovado, recusado, expirado",
-  "Transformar orçamento aprovado em serviço com um clique",
-  "Orçamento aprovado nunca conta como dinheiro recebido",
-  "Histórico de orçamentos por cliente",
-];
-
 export default async function Page() {
   await requireModule("orcamentos");
-  return <ModuleComingSoon item={item} features={FEATURES} />;
+  return <ModuleComingSoon item={item} />;
 }

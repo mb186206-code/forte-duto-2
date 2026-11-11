@@ -13,7 +13,8 @@ Desenvolvimento por fases; cada fase só termina depois de testada.
 - [x] Autenticação: login, sair, recuperação de senha por e-mail (modelos em português), redefinição, proteção de rotas, bloqueio de redirecionamento externo, usuário desativado
 - [x] Perfil (nome, telefone), troca de senha, preferência de tema; admin vê a equipe
 - [x] Banco completo: 20 tabelas, views de saldo, RLS por função, auditoria, Storage (ver DATABASE.md)
-- [x] Testes: 43 unitários, 29 de banco/RLS, 23 de navegador (desktop + celular)
+- [x] Testes: 43 unitários, 29 de banco/RLS, 24 de navegador (desktop + celular)
+- [x] Ajuste pedido pelo Daniel: interface simples e pensada para o celular (barra inferior, botão "+", ações em linguagem do dia a dia)
 
 ## Fase 2 — Financeiro e fundos
 - Dashboard com os 10 indicadores, filtro diário/semanal/mensal/personalizado, gráficos (entradas × saídas, faturamento mensal, despesas por categoria, evolução dos fundos), últimas movimentações, contas a vencer, alertas e estados vazios

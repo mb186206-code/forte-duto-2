@@ -1,5 +1,6 @@
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { Topbar } from "@/components/layout/topbar";
+import { BottomNav } from "@/components/layout/bottom-nav";
 import { requireUser } from "@/lib/auth/session";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -15,10 +16,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <AppSidebar role={user.role} />
       <div className="min-w-0 lg:pl-72">
         <Topbar user={user} />
-        <main id="conteudo" className="mx-auto w-full min-w-0 max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+        <main id="conteudo" className="mx-auto w-full min-w-0 max-w-7xl px-4 pt-5 pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:px-6 lg:py-8">
           {children}
         </main>
       </div>
+      <BottomNav role={user.role} />
     </div>
   );
 }

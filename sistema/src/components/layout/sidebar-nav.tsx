@@ -40,8 +40,8 @@ export function SidebarNav({ role, onNavigate }: { role: Role; onNavigate?: () =
             <Icon className={cn("size-[1.15rem] shrink-0", active ? "text-sidebar-indicator" : "opacity-80")} aria-hidden />
             <span className="flex-1 truncate">{item.label}</span>
             {!isAvailable(item.phase) && (
-              <span className="rounded-full border border-sidebar-border px-1.5 py-px text-[0.62rem] font-semibold tracking-wide text-sidebar-foreground/70 uppercase">
-                Fase {item.phase}
+              <span className="rounded-full border border-sidebar-border px-1.5 py-px text-[0.65rem] font-medium text-sidebar-foreground/70">
+                Em breve
               </span>
             )}
           </Link>

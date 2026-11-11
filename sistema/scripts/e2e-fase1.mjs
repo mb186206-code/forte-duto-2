@@ -76,11 +76,11 @@ await step("login correto volta para a página pedida (?next)", async () => {
   await page.getByRole("heading", { name: "Financeiro", level: 1 }).waitFor();
 });
 
-await step("dashboard mostra saudação, banco conectado e função", async () => {
+await step("início mostra saudação e ações rápidas grandes", async () => {
   await page.goto(`${BASE}/dashboard`);
   await page.getByRole("heading", { level: 1, name: /Daniel!/ }).waitFor();
-  await page.getByText("Conectado").waitFor();
-  await page.getByText("Administrador").first().waitFor();
+  await page.getByRole("heading", { name: "O que você quer fazer?" }).waitFor();
+  await page.getByText("Recebi dinheiro").first().waitFor();
   await shot(page, "03-dashboard-desktop");
 });
 
@@ -91,6 +91,7 @@ await step("menu lateral tem os 9 módulos e marca a página atual", async () =>
   await nav.getByRole("link", { name: /Clientes/ }).click();
   await page.waitForURL(`${BASE}/clientes`);
   assert.equal(await nav.getByRole("link", { name: /Clientes/ }).getAttribute("aria-current"), "page");
+  await page.getByText("Em breve").first().waitFor();
   await shot(page, "04-modulo-clientes");
 });
 
@@ -98,7 +99,7 @@ await step("ações rápidas listam as 5 ações (desativadas até a fase delas)
   await page.getByRole("button", { name: /Novo/ }).click();
   const items = page.getByRole("menuitem");
   assert.equal(await items.count(), 5);
-  assert.equal(await page.getByRole("menuitem", { name: /Nova despesa/ }).getAttribute("aria-disabled"), "true");
+  assert.equal(await page.getByRole("menuitem", { name: /Paguei uma conta/ }).getAttribute("aria-disabled"), "true");
   await shot(page, "05-acoes-rapidas");
   await page.keyboard.press("Escape");
 });
@@ -253,8 +254,23 @@ await step("sem rolagem horizontal no celular", async () => {
   assert.ok(overflow <= 0, `overflow de ${overflow}px`);
 });
 
+await step("barra de baixo: abas simples e botão + com ações do operacional", async () => {
+  const bar = m.getByRole("navigation", { name: "Navegação rápida" });
+  const tabs = (await bar.getByRole("link").allInnerTexts()).map((t) => t.trim());
+  assert.deepEqual(tabs, ["Início", "Serviços", "Clientes"]);
+  await bar.getByRole("button", { name: "Adicionar" }).click();
+  await m.getByRole("heading", { name: "O que você quer fazer?" }).last().waitFor();
+  await m.waitForTimeout(400);
+  const sheet = m.getByRole("dialog");
+  assert.equal(await sheet.getByText("Recebi dinheiro").count(), 0, "operacional não lança dinheiro");
+  await sheet.getByText("Novo cliente").waitFor();
+  await shot(m, "13a-botao-mais-celular");
+  await m.keyboard.press("Escape");
+  await m.waitForTimeout(300);
+});
+
 await step("menu do celular abre e mostra só os módulos do operacional", async () => {
-  await m.getByRole("button", { name: "Abrir menu" }).click();
+  await m.getByRole("navigation", { name: "Navegação rápida" }).getByRole("button", { name: "Menu" }).click();
   await m.waitForTimeout(450); // fim da animação da gaveta
   const nav = m.getByRole("dialog").getByRole("navigation", { name: "Menu principal" });
   const labels = (await nav.getByRole("link").allInnerTexts()).map((t) => t.split("\n")[0].trim());
