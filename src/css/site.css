@@ -109,6 +109,10 @@ section[id] { scroll-margin-top: calc(var(--header-h) + 8px); }
 @keyframes wa-pulso-btn { 0% { transform: scale(1); opacity: .9; } 100% { transform: scale(1.18, 1.45); opacity: 0; } }
 .btn-wa { background: var(--acao); color: var(--branco); }
 .btn-wa:hover { background: var(--acao-hover); }
+/* "Resolva agora": segundo WhatsApp, em amarelo para se diferenciar do "Falar agora" */
+.btn-resolva { background: var(--amarelo); color: var(--azul-escuro); }
+.btn-resolva:hover { background: #F2C200; }
+@media (max-width: 559px) { .header-resolva { display: none; } }
 .btn-ghost { background: transparent; color: var(--branco); border-color: rgba(255,255,255,.5); }
 .btn-ghost:hover { border-color: var(--branco); background: rgba(255,255,255,.08); }
 .btn-dark { background: var(--acao); color: var(--branco); }
@@ -146,6 +150,8 @@ section[id] { scroll-margin-top: calc(var(--header-h) + 8px); }
   .hero-media { justify-self: end; }
 }
 .hero-cta { display: grid; gap: .6rem; justify-items: start; }
+.hero-cta-btns { display: flex; flex-wrap: wrap; gap: .75rem; }
+@media (max-width: 520px) { .hero-cta-btns { flex-direction: column; } }
 .hero-cta-nota { font-size: var(--t-xs); color: var(--azul-claro); }
 /* no celular o logo vai para baixo do texto: o "Falar agora" aparece logo na primeira tela */
 @media (max-width: 959px) { .hero-media { width: min(56vw, 260px); } }
