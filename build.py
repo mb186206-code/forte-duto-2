@@ -28,8 +28,8 @@ def min_js(js):
     return '\n'.join(l.strip() for l in js.splitlines() if l.strip())
 
 
-def wa(msg):
-    return f"https://wa.me/{cfg['whatsapp_number']}?text={quote(msg, safe='')}"
+def wa(msg, numero=None):
+    return f"https://wa.me/{numero or cfg['whatsapp_number']}?text={quote(msg, safe='')}"
 
 
 def json_ld():
@@ -52,13 +52,14 @@ def json_ld():
 
 
 def render(html, css, js=''):
+    html = re.sub(r'\{\{wa2:(.*?)\}\}', lambda m: wa(m.group(1), cfg['whatsapp2_number']), html)
     html = re.sub(r'\{\{wa:(.*?)\}\}', lambda m: wa(m.group(1)), html)
     if site:
         html = html.replace('<!--IF_SITE_URL-->', '').replace('<!--/IF_SITE_URL-->', '')
     else:
         html = re.sub(r'<!--IF_SITE_URL-->.*?<!--/IF_SITE_URL-->\n?', '', html, flags=re.S)
     rep = {
-        '{{SITE_URL}}': site, '{{PHONE_E164}}': cfg['phone_e164'], '{{PHONE_DISPLAY}}': cfg['phone_display'],
+        '{{SITE_URL}}': site, '{{PHONE_E164}}': cfg['phone_e164'], '{{PHONE_DISPLAY}}': cfg['phone_display'], '{{PHONE2_DISPLAY}}': cfg['phone2_display'],
         '{{WHATSAPP_NUMBER}}': cfg['whatsapp_number'], '{{FORM_ENDPOINT}}': cfg.get('form_endpoint', ''),
         '<!--INLINE_CSS-->': f'<style>{css}</style>', '<!--JSON_LD-->': json_ld(),
         '<!--INLINE_JS-->': f'<script>{js}</script>' if js else '',
